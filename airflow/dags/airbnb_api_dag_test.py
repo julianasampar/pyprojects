@@ -8,7 +8,7 @@ with DAG(
     "airbnb_api_dag_test"
     , start_date=datetime(2025, 1, 20)
     , schedule_interval='@weekly'
-    , chatchup=False
+    , catchup=False
     , tag=['airbnb_api', 'api']
 ):
     
