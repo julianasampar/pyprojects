@@ -71,3 +71,4 @@ airflow/logs/scheduler/2025-01-23/airbnb_api_dag_test.py.log
 pipelines/__pycache__/personal_env.cpython-310.pyc
 pipelines/utils/__pycache__/get_credentials.cpython-310.pyc
 airflow/dags/__pycache__/airbnb_api_dag_test.cpython-310.pyc
+pipelines/airbnb_api_v0/__pycache__/airbnb_api_script.cpython-310.pyc
