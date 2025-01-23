@@ -17,3 +17,12 @@ def getting_gcp_credentials() :
     bucket = STORAGE.get_bucket(penv.bucket_path)
     
     return BIGQUERY, bucket
+
+def getting_rapidapi_credentials():
+    
+    import pipelines.personal_env as penv
+    
+    rapidapi_key = penv.rapidapi_key
+    
+    return rapidapi_key
+    
