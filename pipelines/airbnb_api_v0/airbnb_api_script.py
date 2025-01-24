@@ -1,6 +1,8 @@
+from airflow import DAG
+
 ## This script define the functions to be called on Airbnb API DAG
 
-def set_checkin_and_checkout_parameters():
+def set_checkin_and_checkout_parameters(ti, **kwargs):
 # This function sets the Check-In and Check-Out parameters for the API GET request 
     
     # Importing libraries
@@ -23,9 +25,10 @@ def set_checkin_and_checkout_parameters():
             ##}
         ]
     
-    return checkInAndOutDates
+    ti.xcom_push(key='date_api_parameter_key', value=checkInAndOutDates)
 
-def set_location_parameters():
+
+def set_location_parameters(ti, **kwargs):
 # This function sets the Location parameters for the API GET request
     
     # Importing libraries
@@ -53,16 +56,17 @@ def set_location_parameters():
     neighbourhoods = BIGQUERY.query(sql).result().to_dataframe()
     neighbourhoods = neighbourhoods.values.tolist()
     
-    return neighbourhoods
+    ti.xcom_push(key='location_api_parameter_key', value=neighbourhoods)
 
 
-def get_airbnb_api_request(): 
+def get_airbnb_api_request(ti, **kwargs): 
 # This function make the GET request to Airbnb Scrapper API and writes a dataframe with the result
     
     import requests
     import json
     import pandas as pd
     import pipelines.utils.personal_env as penv
+    from datetime import datetime
     
     ## Creating dataframe df to write the following loop results
 
@@ -95,8 +99,15 @@ def get_airbnb_api_request():
         'x-rapidapi-host': "airbnb-scraper-api.p.rapidapi.com"
 }
     
-    checkInAndOutDates = set_checkin_and_checkout_parameters()
-    neighbourhoods = set_location_parameters()
+    checkInAndOutDates = ti.xcom_pull(
+        key='date_api_parameter_key'
+        , task_ids='set_date_parameters'
+        )
+    neighbourhoods = ti.xcom_pull(
+        key='location_api_parameter_key'
+        , task_ids='set_location_parameters'
+        )
+
     
     for i in range(len(neighbourhoods)):
 

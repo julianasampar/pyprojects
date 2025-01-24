@@ -4,7 +4,6 @@ import sys
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
-import pandas as pd
 
 ## Importing local scripts
 
