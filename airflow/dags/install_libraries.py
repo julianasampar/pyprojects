@@ -19,6 +19,7 @@ with DAG(
             , 'google.cloud.storage'
             , 'json'
             , 'pyarrow'
+            , 'fastavro'
     ]
         
     for i in range(len(packages)):

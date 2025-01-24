@@ -32,10 +32,10 @@ with DAG(
         , python_callable=api.set_location_parameters
     )
     
-    get_api_request = PythonOperator(
-        task_id = 'get_api_request'
+    get_and_unload_api_request = PythonOperator(
+        task_id = 'get_and_unload_api_request'
         , python_callable=api.get_airbnb_api_request
     )
     
-    set_date_parameters >> set_location_parameters >> get_api_request 
+    set_date_parameters >> set_location_parameters >> get_and_unload_api_request 
 
