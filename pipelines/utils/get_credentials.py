@@ -5,6 +5,7 @@ def getting_gcp_credentials() :
     from google.oauth2 import service_account
     from google.cloud import storage
     import pipelines.personal_env as penv
+    import json
 
     ## Importing Credentials from Google Cloud
 
@@ -17,6 +18,7 @@ def getting_gcp_credentials() :
     bucket = STORAGE.get_bucket(penv.bucket_path)
     
     return BIGQUERY, bucket
+    
 
 def getting_rapidapi_credentials():
     
