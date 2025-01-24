@@ -9,7 +9,7 @@ import pandas as pd
 sys.path.append("/home/tabas/personal-dev/pyprojects")
 import pipelines.utils.get_credentials as cr
 
-# The function below sets the Check-In and Check-Out parameters for the API GET request
+# The function below sets the Check-In and Check-Out parameters for the API GET request 
 
 def set_checkin_and_checkout_parameters():
     
@@ -38,6 +38,17 @@ def set_checkin_and_checkout_parameters():
 # The function below sets the Location parameters for the API GET request
 
 def set_location_parameters():
+    
+    # Importing libraries
+    
+    from google.cloud import bigquery
+    from google.oauth2 import service_account
+    import pipelines.personal_env as penv
+
+    ## Importing Credentials from Google Cloud
+
+    CREDENTIALS = service_account.Credentials.from_service_account_file(penv.bq_path)
+    BIGQUERY = bigquery.Client(credentials=CREDENTIALS)
  
     ## Query collecting desired Neighbourhoods
 
@@ -49,10 +60,6 @@ def set_location_parameters():
             """
             
     ## Creating dataframe neighbourhoods to write the results
-    
-    bq = cr.getting_gcp_credentials()
-    
-    BIGQUERY = bq.BIGQUERY
 
     neighbourhoods = BIGQUERY.query(sql).result().to_dataframe()
     neighbourhoods = neighbourhoods.values.tolist()
@@ -64,6 +71,7 @@ def get_airbnb_api_request():
     import requests
     import json
     import pandas as pd
+    import pipelines.personal_env as penv
     
     ## Creating dataframe df to write the following loop results
 
@@ -95,12 +103,15 @@ def get_airbnb_api_request():
     url = "https://airbnb-scraper-api.p.rapidapi.com/airbnb_search_stays_v2"
 
     headers = {
-        'x-rapidapi-key': rapidapi_key,
+        'x-rapidapi-key': penv.rapidapi_key,
         'x-rapidapi-host': "airbnb-scraper-api.p.rapidapi.com"
 }
     
     set_checkin_and_checkout_parameters()
     set_location_parameters()
+    
+    neighbourhoods = neighbourhoods
+    checkInAndOutDates = checkInAndOutDates
     
     for i in range(len(neighbourhoods)):
 

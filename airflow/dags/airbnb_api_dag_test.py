@@ -27,7 +27,7 @@ with DAG(
     get_credentials = PythonOperator(
         task_id = 'get_credentials'
         , python_callable=getting_gcp_credentials
-    )
+    ) #Remover essa função de credenciais
     
     set_date_parameters = PythonOperator(
         task_id = 'set_date_parameters'
