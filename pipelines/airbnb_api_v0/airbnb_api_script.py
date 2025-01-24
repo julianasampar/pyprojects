@@ -1,17 +1,7 @@
 ## This script define the functions to be called on Airbnb API DAG
 
-# Importing libraries
-
-import sys
-from datetime import datetime, timedelta
-import pandas as pd
-
-sys.path.append("/home/tabas/personal-dev/pyprojects")
-import pipelines.utils.get_credentials as cr
-
-# The function below sets the Check-In and Check-Out parameters for the API GET request 
-
 def set_checkin_and_checkout_parameters():
+# This function sets the Check-In and Check-Out parameters for the API GET request 
     
     # Importing libraries
     
@@ -35,15 +25,14 @@ def set_checkin_and_checkout_parameters():
     
     return checkInAndOutDates
 
-# The function below sets the Location parameters for the API GET request
-
 def set_location_parameters():
+# This function sets the Location parameters for the API GET request
     
     # Importing libraries
     
     from google.cloud import bigquery
     from google.oauth2 import service_account
-    import pipelines.personal_env as penv
+    import pipelines.utils.personal_env as penv
 
     ## Importing Credentials from Google Cloud
 
@@ -66,17 +55,19 @@ def set_location_parameters():
     
     return neighbourhoods
 
+
 def get_airbnb_api_request(): 
+# This function make the GET request to Airbnb Scrapper API and writes a dataframe with the result
     
     import requests
     import json
     import pandas as pd
-    import pipelines.personal_env as penv
+    import pipelines.utils.personal_env as penv
     
     ## Creating dataframe df to write the following loop results
 
     df = pd.DataFrame(columns=['badges'
-                            , 'coordinates'
+                                , 'coordinates'
                                 , 'id'
                                 , 'images'
                                 , 'price'
@@ -94,10 +85,7 @@ def get_airbnb_api_request():
                                 , 'scrappedPage'
                                 , 'extractionTimestamp'
                             ])
-    ## Getting RapidAPI credentials
-    
-    cr.getting_rapidapi_credentials()
-    
+        
     ## Define the variables to access Airbnb Scraper API
 
     url = "https://airbnb-scraper-api.p.rapidapi.com/airbnb_search_stays_v2"
@@ -107,11 +95,8 @@ def get_airbnb_api_request():
         'x-rapidapi-host': "airbnb-scraper-api.p.rapidapi.com"
 }
     
-    set_checkin_and_checkout_parameters()
-    set_location_parameters()
-    
-    neighbourhoods = neighbourhoods
-    checkInAndOutDates = checkInAndOutDates
+    checkInAndOutDates = set_checkin_and_checkout_parameters()
+    neighbourhoods = set_location_parameters()
     
     for i in range(len(neighbourhoods)):
 
