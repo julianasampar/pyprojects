@@ -1,5 +1,3 @@
-from airflow import DAG
-
 ## This script define the functions to be called on Airbnb API DAG
 
 def set_checkin_and_checkout_parameters(ti, **kwargs):
