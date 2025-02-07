@@ -75,3 +75,6 @@ pipelines/airbnb_api_v0/__pycache__/airbnb_api_script.cpython-310.pyc
 airflow/dags/__pycache__/install_libraries.cpython-310.pyc
 pipelines/utils/__pycache__/personal_env.cpython-310.pyc
 pipelines/spotify_api_v0/.cache
+airflow/dags/__pycache__/spotify_api_dag.cpython-310.pyc
+pipelines/archive/airbnb_api_test_data__2025-02-07 11:33:04.avro
+pipelines/spotify_api_v0/__pycache__/spotify_api_script.cpython-310.pyc

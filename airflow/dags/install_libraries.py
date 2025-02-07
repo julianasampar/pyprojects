@@ -20,6 +20,7 @@ with DAG(
             , 'json'
             , 'pyarrow'
             , 'fastavro'
+            , 'spotipy'
     ]
         
     for i in range(len(packages)):
