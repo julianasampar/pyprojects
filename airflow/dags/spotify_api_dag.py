@@ -9,6 +9,7 @@ from datetime import datetime
 
 sys.path.append("/home/tabas/personal-dev/pyprojects")
 import pipelines.spotify_api_v0.spotify_api_script as api
+import pipelines.utils.common as com
 
 with DAG(
     "extract_spotify_api_data"
@@ -46,7 +47,7 @@ with DAG(
     )
     
     prep_albums = PythonOperator(
-        task_id='prep_album'
+        task_id='prep_albums'
         , python_callable=api.prep_albums
     )
     
@@ -60,11 +61,14 @@ with DAG(
         , python_callable=api.prep_tracks
     )
     
-    #unload_data = 
+    unload_data = PythonOperator(
+        task_id='unload_data'
+        , python_callable=api.unload_spotify_data
+    )
     
     get_new_releases >> prep_new_releases >> [get_artists, get_albums ]
-    get_artists >> prep_artists
-    get_albums >> prep_albums >> get_tracks >> prep_tracks
-    #[prep_new_releases, prep_artists, prep_albums, prep_tracks] >> unload_data
+    get_artists >> prep_artists 
+    get_albums >> prep_albums >> get_tracks >> prep_tracks 
+    [prep_new_releases, prep_artists, prep_albums, prep_tracks] >> unload_data
 
     

@@ -1,10 +1,12 @@
 ## This script define the functions to be called on Spotify API DAG
 
 import spotipy
+import numpy as np 
 from spotipy.oauth2 import SpotifyClientCredentials
 import pipelines.utils.personal_env as penv
 import pandas as pd
 from datetime import datetime
+import pipelines.utils.common as common
 
 # Stablishing Spotify Authentication
 auth_manager = SpotifyClientCredentials(client_id=penv.spotify_client_id, client_secret=penv.spotify_client_secret)
@@ -216,12 +218,19 @@ def prep_albums(ti, **kwargs):
 
     ## To extract the track id we'll have to:
     # 1) Extract the key 'items' inside the dictionary
-    items = albums['tracks'].apply(lambda x: x['items'] if isinstance(x, dict) else [])
+        
+    albums['items'] = albums['tracks'].apply(lambda x: x['items'] if isinstance(x, dict) else [])
 
     # 2) Extract the id inside the list
-    albums['track_id'] = items.apply(lambda x: [track['id'] for track in x] if isinstance(x, list) else [])
-    albums['track_href'] = items.apply(lambda x: [track['href'] for track in x] if isinstance(x, list) else [])
-    albums['track_uri'] = items.apply(lambda x: [track['uri'] for track in x] if isinstance(x, list) else [])
+    albums['track_id'] = albums['items'].apply(
+        lambda x: [track['id'] for track in np.array(x)] if isinstance(x, (list, np.ndarray)) else None
+    )
+    albums['track_href'] = albums['items'].apply(
+        lambda x: [track['href'] for track in np.array(x)] if isinstance(x, (list, np.ndarray)) else None
+    )
+    albums['track_uri'] = albums['items'].apply(
+        lambda x: [track['uri'] for track in np.array(x)] if isinstance(x, (list, np.ndarray)) else None
+    )
     
     # Removing unnecessary and/or treated columns
     albums = albums.drop(columns=['external_urls', 'artists', 'tracks', 'genres']) 
@@ -239,6 +248,7 @@ def prep_albums(ti, **kwargs):
                     'release_date', 
                     'release_date_precision', 
                     'type', 
+                    'items',
                     'artist_id', 
                     'artist_href', 
                     'artist_uri', 
@@ -255,16 +265,19 @@ def prep_albums(ti, **kwargs):
     
     # Removing duplicated album id
     albums = albums[albums.duplicated(subset='id') == False]
-    tracksList = list(albums['track_id'])
+    tracksList = list(albums['track_id'].explode())
     
     ti.xcom_push(key='spotify_albums_df', value=albums)
     ti.xcom_push(key='spotify_tracks_id_list', value=tracksList)
+
     
     
 def get_tracks(ti, **kwargs):
     
     tracksList = ti.xcom_pull(key='spotify_tracks_id_list', task_ids='prep_albums')
     tracksList =  list(set(tracksList))
+    
+    tracks = pd.DataFrame()
     
     # Redefining batchSize variable
     batchSize = 50 # Spotify limit for Track Request is 50
@@ -280,9 +293,10 @@ def get_tracks(ti, **kwargs):
     ti.xcom_push(key='spotify_tracks_df', value=tracks)
     
     
+    
 def prep_tracks(ti, **kwargs):
     
-    tracks = ti.xcom_pull(key='spotify_tracks_df', taks_ids='get_tracks')
+    tracks = ti.xcom_pull(key='spotify_tracks_df', task_ids='get_tracks')
     tracks = pd.DataFrame(tracks)
     
     # Doing the same treatments as above    
@@ -318,6 +332,30 @@ def prep_tracks(ti, **kwargs):
         ]
     
     ti.xcom_push(key='spotify_tracks_df', value=tracks)
+    
+def unload_spotify_data(ti, **kwargs):
+    
+    releases = ti.xcom_pull(key='spotify_new_releases_df', task_ids='prep_new_releases')
+    artists = ti.xcom_pull(key='spotify_artists_df', task_ids='prep_artists')
+    albums = ti.xcom_pull(key='spotify_albums_df', task_ids='prep_albums')
+    tracks = ti.xcom_pull(key='spotify_tracks_df', task_ids='prep_tracks')
+    
+    ## Defining variables to call unload_data function
+    
+    origin = 'spotify_api'
+    bucket = penv.bucket_path
+    bucket_folder = f"{penv.bucket_folder}/sp"
+    file_formats = ['parquet']
+    df_dict = {
+            'releases': releases,
+            'artists': artists,
+            'albums': albums,
+            'tracks': tracks    
+    }
+    
+    ## Writing Dataframe to Bucket folder with desired file format 
+
+    common.unload_data(origin, file_formats, df_dict, bucket, bucket_folder)
     
 
 

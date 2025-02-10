@@ -49,12 +49,19 @@ def avro_df_prep(df, file_name):
 
 ## Function to write Dataframe to Bucket folder with desired file format 
     
-def unload_data(file_formats, df_dict, bucket, bucket_folder):
+def unload_data(origin, file_formats, df_dict, bucket, bucket_folder):
+    ## origin: name of table source
+    ## file_formats: LIST of file formats - can take csv, parquet, json, orc and avro as arguments; 
+    ## df_dict: DICTIONARY where the key is the dataframe name and the value is the dataframe itself
     
     from datetime import datetime
+    from google.cloud import storage
+    from google.oauth2 import service_account
+    import pipelines.utils.personal_env as penv
 
-## file_formats: LIST of file formats - can take csv, parquet, json, orc and avro as arguments; 
-## df_dict: DICTIONARY where the key is the dataframe name and the value is the dataframe itself
+    CREDENTIALS = service_account.Credentials.from_service_account_file(penv.bq_path)
+    STORAGE = storage.Client(credentials=CREDENTIALS)
+    bucket = STORAGE.get_bucket(bucket)
 
     df = df_dict
 
@@ -68,7 +75,7 @@ def unload_data(file_formats, df_dict, bucket, bucket_folder):
             # Adding currentTimestamp on file name, so it doesn't overwrite itself. 
             # Also, it helps keep trackof data unloaded for incremental models
 
-            file_name = f"spotify_{key}_api_test_data__{currentTimestamp}"
+            file_name = f"{origin}__{key}_data__{currentTimestamp}"
         
             blob = bucket.blob(f"{bucket_folder}/{file_name}.{file_formats[i]}")
             
