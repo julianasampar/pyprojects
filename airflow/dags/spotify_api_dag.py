@@ -3,7 +3,7 @@
 import sys
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Importing local scripts
 
@@ -14,7 +14,7 @@ import pipelines.utils.common as com
 with DAG(
     "extract_spotify_api_data"
     , start_date=datetime(2025, 2, 1)
-    , schedule_interval='@daily'
+    , schedule_interval=datetime.timedelta(days=15)
     , catchup=False
     , tags=['spotify_api', 'api']
 ):
