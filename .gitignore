@@ -10,6 +10,5 @@ airflow/webserver_config.py
 *.txt
 *.avro
 *.xlsx
-*.parquet
 pipelines/cloud_manager/write_parquets.ipynb
 airflow/logs/scheduler/latest
