@@ -7,6 +7,8 @@ import duckdb
 import os
 
 MANHATTAN_STATS_FILE_PATH = "data/staging/manhattan_stats.geojson"
+MANHATTAN_MAP_FILE_PATH = "data/outputs/manhattan_map.png"
+
 
 @dg.asset
 def manhattan_stats():
@@ -30,3 +32,20 @@ def manhattan_stats():
 
     with open(MANHATTAN_STATS_FILE_PATH, 'w') as output_file:
         output_file.write(trips_by_zone.to_json())
+
+@dg.asset(
+    deps=["manhattan_stats"],
+)
+def manhattan_map() -> None:
+    trips_by_zone = gpd.read_file(MANHATTAN_STATS_FILE_PATH)
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    trips_by_zone.plot(column="num_trips", cmap="plasma", legend=True, ax=ax, edgecolor="black")
+    ax.set_title("Number of Trips per Taxi Zone in Manhattan")
+
+    ax.set_xlim([-74.05, -73.90])  # Adjust longitude range
+    ax.set_ylim([40.70, 40.82])  # Adjust latitude range
+    
+    # Save the image
+    plt.savefig(MANHATTAN_MAP_FILE_PATH, format="png", bbox_inches="tight")
+    plt.close(fig)
