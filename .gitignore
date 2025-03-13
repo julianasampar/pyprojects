@@ -13,3 +13,4 @@ airflow/webserver_config.py
 *.parquet
 pipelines/cloud_manager/write_parquets.ipynb
 airflow/logs/scheduler/latest
+.DS_Store
