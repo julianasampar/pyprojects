@@ -1,6 +1,11 @@
 import requests
 import sys
+
+import duckdb
+import os
 import dagster as dg
+from dagster._utils.backoff import backoff
+
 
 TAXI_TRIPS_TEMPLATE_FILE_PATH = "data/raw/taxi_trips_{}.parquet"
 TAXI_ZONES_FILE_PATH = "data/raw/taxi_zones.csv"
