@@ -32,14 +32,14 @@ def manhattan_stats():
     trips_by_zone["geometry"] = gpd.GeoSeries.from_wkt(trips_by_zone["geometry"])
     trips_by_zone = gpd.GeoDataFrame(trips_by_zone)
 
-    with open(MANHATTAN_STATS_FILE_PATH, 'w') as output_file:
+    with open(os.getenv("MANHATTAN_STATS_FILE_PATH"), 'w') as output_file:
         output_file.write(trips_by_zone.to_json())
 
 @dg.asset(
     deps=["manhattan_stats"],
 )
 def manhattan_map() -> None:
-    trips_by_zone = gpd.read_file(MANHATTAN_STATS_FILE_PATH)
+    trips_by_zone = gpd.read_file(os.getenv("MANHATTAN_STATS_FILE_PATH"))
 
     fig, ax = plt.subplots(figsize=(10, 10))
     trips_by_zone.plot(column="num_trips", cmap="plasma", legend=True, ax=ax, edgecolor="black")
@@ -49,7 +49,7 @@ def manhattan_map() -> None:
     ax.set_ylim([40.70, 40.82])  # Adjust latitude range
     
     # Save the image
-    plt.savefig(MANHATTAN_MAP_FILE_PATH, format="png", bbox_inches="tight")
+    plt.savefig(os.getenv("MANHATTAN_MAP_FILE_PATH"), format="png", bbox_inches="tight")
     plt.close(fig)
 
 @dg.asset(
@@ -78,5 +78,5 @@ def trips_by_week():
 
     trips_by_week = conn.execute(query).fetch_df()
 
-    trips_by_week.to_csv(TRIPS_BY_WEEK_FILE_PATH, index=False)
+    trips_by_week.to_csv(os.getenv("TRIPS_BY_WEEK_FILE_PATH"), index=False)
 

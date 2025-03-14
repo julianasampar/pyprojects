@@ -6,11 +6,6 @@ import os
 import dagster as dg
 from dagster._utils.backoff import backoff
 
-
-TAXI_TRIPS_TEMPLATE_FILE_PATH = "data/raw/taxi_trips_{}.parquet"
-TAXI_ZONES_FILE_PATH = "data/raw/taxi_zones.csv"
-
-
 @dg.asset
 def taxi_trips_file():
     """
@@ -21,7 +16,7 @@ def taxi_trips_file():
         f"https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{month_to_fetch}.parquet"
     )
 
-    with open(TAXI_TRIPS_TEMPLATE_FILE_PATH.format(month_to_fetch), "wb") as output_file:
+    with open(os.getenv("TAXI_TRIPS_TEMPLATE_FILE_PATH").format(month_to_fetch), "wb") as output_file:
         output_file.write(raw_trips.content)
 
 @dg.asset
@@ -34,7 +29,7 @@ def taxi_zone_file():
         "https://community-engineering-artifacts.s3.us-west-2.amazonaws.com/dagster-university/data/taxi_zones.csv"
     )
 
-    with open(TAXI_ZONES_FILE_PATH, "wb") as output_file:
+    with open(os.getenv("TAXI_ZONES_FILE_PATH"), "wb") as output_file:
         output_file.write(raw_zones.content)
 
 @dg.asset(
