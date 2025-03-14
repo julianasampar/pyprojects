@@ -4,10 +4,12 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 
 import duckdb
+from dagster._utils.backoff import backoff
 import os
 
 MANHATTAN_STATS_FILE_PATH = "data/staging/manhattan_stats.geojson"
 MANHATTAN_MAP_FILE_PATH = "data/outputs/manhattan_map.png"
+TRIPS_BY_WEEK_FILE_PATH = "data/outputs/trips_by_week.csv"
 
 
 @dg.asset
@@ -49,3 +51,32 @@ def manhattan_map() -> None:
     # Save the image
     plt.savefig(MANHATTAN_MAP_FILE_PATH, format="png", bbox_inches="tight")
     plt.close(fig)
+
+@dg.asset(
+    deps=["taxi_trips"]
+)
+def trips_by_week():
+    query = """
+        SELECT
+            DATE_TRUNC('week', pickup_datetime) AS week
+            , COUNT(*) AS num_trips
+            , SUM(passenger_count) AS passenger_count
+            , SUM(total_amount) AS total_amount
+            , SUM(trip_distance) AS trip_distance
+        FROM trips
+        GROUP BY ALL
+    """
+
+    conn = backoff(
+        fn=duckdb.connect,
+        retry_on=(RuntimeError, duckdb.IOException),
+        kwargs={
+            "database": os.getenv("DUCKDB_DATABASE"),
+        },
+        max_retries=10,
+    )
+
+    trips_by_week = conn.execute(query).fetch_df()
+
+    trips_by_week.to_csv(TRIPS_BY_WEEK_FILE_PATH, index=False)
+

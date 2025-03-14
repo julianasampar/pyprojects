@@ -16,3 +16,4 @@ pipelines/cloud_manager/write_parquets.ipynb
 airflow/logs/scheduler/latest
 .DS_Store
 dagster_university/data/staging/data.duckdb
+dagster_university/.tmp_dagster_home_iip59bvg/storage/*ß
