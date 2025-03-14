@@ -1,19 +1,11 @@
 import dagster as dg
-
+from dagster_duckdb import DuckDBResource
 import matplotlib.pyplot as plt
 import geopandas as gpd
-
-import duckdb
-from dagster._utils.backoff import backoff
 import os
 
-MANHATTAN_STATS_FILE_PATH = "data/staging/manhattan_stats.geojson"
-MANHATTAN_MAP_FILE_PATH = "data/outputs/manhattan_map.png"
-TRIPS_BY_WEEK_FILE_PATH = "data/outputs/trips_by_week.csv"
-
-
 @dg.asset
-def manhattan_stats():
+def manhattan_stats(database: DuckDBResource):
     query = """
         select
             zones.zone,
@@ -26,8 +18,8 @@ def manhattan_stats():
         group by zone, borough, geometry
     """
 
-    conn = duckdb.connect(os.getenv("DUCKDB_DATABASE"))
-    trips_by_zone = conn.execute(query).fetch_df()
+    with database.get_connection() as conn:
+        trips_by_zone = conn.execute(query).fetch_df()
 
     trips_by_zone["geometry"] = gpd.GeoSeries.from_wkt(trips_by_zone["geometry"])
     trips_by_zone = gpd.GeoDataFrame(trips_by_zone)
@@ -38,7 +30,7 @@ def manhattan_stats():
 @dg.asset(
     deps=["manhattan_stats"],
 )
-def manhattan_map() -> None:
+def manhattan_map():
     trips_by_zone = gpd.read_file(os.getenv("MANHATTAN_STATS_FILE_PATH"))
 
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -55,7 +47,7 @@ def manhattan_map() -> None:
 @dg.asset(
     deps=["taxi_trips"]
 )
-def trips_by_week():
+def trips_by_week(database: DuckDBResource):
     query = """
         SELECT
             DATE_TRUNC('week', pickup_datetime) AS week
@@ -67,16 +59,8 @@ def trips_by_week():
         GROUP BY ALL
     """
 
-    conn = backoff(
-        fn=duckdb.connect,
-        retry_on=(RuntimeError, duckdb.IOException),
-        kwargs={
-            "database": os.getenv("DUCKDB_DATABASE"),
-        },
-        max_retries=10,
-    )
-
-    trips_by_week = conn.execute(query).fetch_df()
+    with database.get_connection() as conn:
+        trips_by_week = conn.execute(query).fetch_df()
 
     trips_by_week.to_csv(os.getenv("TRIPS_BY_WEEK_FILE_PATH"), index=False)
 

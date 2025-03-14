@@ -1,7 +1,6 @@
 import requests
 import os
 import dagster as dg
-from dagster._utils.backoff import backoff
 from dagster_duckdb import DuckDBResource
 
 
