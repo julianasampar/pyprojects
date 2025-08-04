@@ -1,6 +1,9 @@
 personal_env.py
 airflow/webserver_config.py
 *.log
+*.env
+*.complete
+*/__pycache__/*
 *.pyc
 *.pid
 *.out
@@ -13,3 +16,6 @@ airflow/webserver_config.py
 *.parquet
 pipelines/cloud_manager/write_parquets.ipynb
 airflow/logs/scheduler/latest
+.DS_Store
+dagster_university/data/staging/data.duckdb
+*.tmp_dagster_home_*
