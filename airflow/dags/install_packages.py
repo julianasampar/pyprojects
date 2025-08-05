@@ -10,7 +10,7 @@ with DAG(
     , start_date=datetime(2025, 8, 4)
     , schedule='@once'
     , catchup=False
-    , tags=['lib', 'pip install']
+    , tags=['packages', 'python']
 ):
     packages = [
             'pandas'
