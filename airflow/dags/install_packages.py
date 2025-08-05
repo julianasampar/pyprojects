@@ -6,7 +6,7 @@ import sys
 import subprocess
 
 with DAG(
-    "install_libraries"
+    "install_packages"
     , start_date=datetime(2025, 8, 4)
     , schedule='@once'
     , catchup=False
@@ -25,7 +25,7 @@ with DAG(
         
     for i in range(len(packages)):
             
-        def install_libraries():
+        def install_packages():
 
             subprocess.check_call([sys.executable, '-m', 'pip', 'install', packages[i]])
         
@@ -33,7 +33,7 @@ with DAG(
                 
         task = PythonOperator(
             task_id = f"install_{packages[i]}"
-            , python_callable=install_libraries
+            , python_callable=install_packages
         )
         
         task
