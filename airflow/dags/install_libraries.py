@@ -7,9 +7,9 @@ import subprocess
 
 with DAG(
     "install_libraries"
-    , start_date=datetime(2025, 1, 20)
-    , schedule='@daily'
-    , catchup=True
+    , start_date=datetime(2025, 8, 4)
+    , schedule='@once'
+    , catchup=False
     , tags=['lib', 'pip install']
 ):
     packages = [
