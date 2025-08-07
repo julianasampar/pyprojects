@@ -1,12 +1,17 @@
 ## This script define the functions to be called on Spotify API DAG
 
+import sys 
+sys.path.append("airflow")
+
 import spotipy
-import numpy as np 
 from spotipy.oauth2 import SpotifyClientCredentials
-import pipelines.utils.personal_env as penv
+
+import scripts.utils.personal_env as penv
+import scripts.utils.common as common
+
 import pandas as pd
+import numpy as np 
 from datetime import datetime
-import pipelines.utils.common as common
 import time
 
 # Stablishing Spotify Authentication
