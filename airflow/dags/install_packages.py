@@ -23,16 +23,16 @@ with DAG(
             , 'spotipy'
     ]
         
-    for i in range(len(packages)):
+    for package in packages:
             
-        def install_packages():
+        def install_packages(package=package):
 
-            subprocess.check_call([sys.executable, '-m', 'pip', 'install', packages[i]])
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
         
             ## Defining DAG tasks
                 
         task = PythonOperator(
-            task_id = f"install_{packages[i]}"
+            task_id = f"install_{package}"
             , python_callable=install_packages
         )
         
