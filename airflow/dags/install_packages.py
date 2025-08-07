@@ -6,11 +6,11 @@ import sys
 import subprocess
 
 with DAG(
-    "install_libraries"
+    "install_packages"
     , start_date=datetime(2025, 8, 4)
     , schedule='@once'
     , catchup=False
-    , tags=['lib', 'pip install']
+    , tags=['packages', 'python']
 ):
     packages = [
             'pandas'
@@ -23,17 +23,17 @@ with DAG(
             , 'spotipy'
     ]
         
-    for i in range(len(packages)):
+    for package in packages:
             
-        def install_libraries():
+        def install_packages(package=package):
 
-            subprocess.check_call([sys.executable, '-m', 'pip', 'install', packages[i]])
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
         
             ## Defining DAG tasks
                 
         task = PythonOperator(
-            task_id = f"install_{packages[i]}"
-            , python_callable=install_libraries
+            task_id = f"install_{package}"
+            , python_callable=install_packages
         )
         
         task
