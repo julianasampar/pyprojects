@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 # Importing local scripts
 
 sys.path.append("/home/tabas/personal-dev/pyprojects")
-import pipelines.spotify_api_v0.spotify_api_script as api
-import pipelines.utils.common as com
+import scripts.spotify_api_v0.spotify_api_script as api
+import scripts.utils.common as com
 
 with DAG(
     "extract_spotify_api_data"

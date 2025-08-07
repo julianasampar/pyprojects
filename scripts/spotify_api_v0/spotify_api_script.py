@@ -3,10 +3,10 @@
 import spotipy
 import numpy as np 
 from spotipy.oauth2 import SpotifyClientCredentials
-import pipelines.utils.personal_env as penv
+import scripts.utils.personal_env as penv
 import pandas as pd
 from datetime import datetime
-import pipelines.utils.common as common
+import scripts.utils.common as common
 import time
 
 # Stablishing Spotify Authentication
