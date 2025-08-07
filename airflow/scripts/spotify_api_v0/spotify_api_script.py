@@ -3,7 +3,7 @@
 import spotipy
 import numpy as np 
 from spotipy.oauth2 import SpotifyClientCredentials
-import scripts.utils.personal_env as penv
+import utils.personal_env as penv
 import pandas as pd
 from datetime import datetime
 import scripts.utils.common as common
