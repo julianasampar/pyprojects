@@ -14,8 +14,10 @@ airflow/webserver_config.py
 *.avro
 *.xlsx
 *.parquet
+*.cache
 pipelines/cloud_manager/write_parquets.ipynb
 airflow/logs/scheduler/latest
 .DS_Store
 dagster_university/data/staging/data.duckdb
 *.tmp_dagster_home_*
+target/*

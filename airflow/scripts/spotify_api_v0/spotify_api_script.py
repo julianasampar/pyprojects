@@ -26,19 +26,19 @@ def get_new_releases(ti, **kwargs):
 
     markets = [
             "AD", "AE", "AG", "AL", "AM", "AO", "AR", "AT", "AU", #"AZ", "BA", "BB", "BD", 
-            "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", 
+            #"BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", 
             #"BZ", "CA", "CD", "CG", "CH", "CI", "CL", "CM", "CO", "CR", "CV", "CW", "CY", 
             #"CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ES", "ET", "FI", 
-            "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GM", "GN", "GQ", "GR", "GT", 
+            #"FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GM", "GN", "GQ", "GR", "GT", 
             #"GW", "GY", "HK", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IS", 
-            "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KR", "KW", "KZ", 
+            #"IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KR", "KW", "KZ", 
             #"LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", 
             #"MD", "ME", "MG", "MH", "MK", "ML", "MN", "MO", "MR", "MT", "MU", "MV", "MW", 
-            "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NZ", "OM", 
+            #"MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NZ", "OM", 
             #"PA", "PE", "PG", "PH", "PK", "PL", "PR", "PS", "PT", "PW", "PY", "QA", "RO", 
             #"RS", "RW", "SA", "SB", "SC", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SR", 
             #"ST", "SV", "SZ", "TD", "TG", "TH", "TJ", "TL", "TN", "TO", "TR", "TT", "TV", 
-            "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", 
+            #"TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", 
             #"ZA", "ZM", "ZW"
            ]
     
@@ -49,10 +49,10 @@ def get_new_releases(ti, **kwargs):
     ## Creating loop to make GET Request
     ## The first request gets the list of new Albums released two weeks ago from each market defined above
 
-    for i in range(len(markets)):
+    for market in markets:
         
         ## The Spotify only returns 50 values per request 
-        # (the variables 'limit' and 'batchSize' helps Spotify not crash if the data exceeds)
+        # (the variables 'limit' and 'offset' helps Spotify not crash if the data exceeds)
         
         limit = 50
         offset = 0
@@ -60,7 +60,7 @@ def get_new_releases(ti, **kwargs):
         while offset < 1000:    # Spotify limit for Search Request is 1000
             
             ## Making GET request of the type search with the tag:'new', that returns the latest Albums
-            newReleases = sp.search(q="tag:new", market=markets[i], type="album", limit=limit, offset=offset)
+            newReleases = sp.search(q="tag:new", market=market, type="album", limit=limit, offset=offset)
             newReleasesData = pd.DataFrame.from_dict(newReleases['albums']['items'])
             
             releases = pd.concat([releases, newReleasesData])
@@ -69,7 +69,7 @@ def get_new_releases(ti, **kwargs):
             # Incremental addition to offset to return the following pages of data
             offset=offset+limit
             
-        print("Successfully got request from ", markets[i], "market")
+        print("Successfully got request from ", market, "market")
         
         time.sleep(20)
         
@@ -96,8 +96,8 @@ def prep_new_releases(ti, **kwargs):
     releases = releases.drop(columns=['external_urls', 'artists'])
 
     # Ordering columns
-    releases = releases[[
-                        'id', 
+    releases = releases[
+                        ['id', 
                         'href', 
                         'uri', 
                         'spotify_url', 
