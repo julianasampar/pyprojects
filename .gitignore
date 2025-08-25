@@ -19,3 +19,6 @@ airflow/logs/scheduler/latest
 .DS_Store
 dagster_university/data/staging/data.duckdb
 *.tmp_dagster_home_*
+.cache
+/target
+.gitkeep
