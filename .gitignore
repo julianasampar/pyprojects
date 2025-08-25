@@ -22,3 +22,4 @@ dagster_university/data/staging/data.duckdb
 .cache
 /target
 .gitkeep
+others/archive/nyc_street_tree_census__2015.csv
