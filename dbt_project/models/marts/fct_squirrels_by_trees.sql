@@ -28,7 +28,8 @@ SELECT
    SUM(squirrels.was_foraging) AS squirrels_foraging,
    SUM(squirrels.was_approaching) AS squirrels_approaching,
    SUM(squirrels.was_indifferent) AS squirrels_indifferent,
-   SUM(squirrels.was_running_from) AS squirrels_running_from
+   SUM(squirrels.was_running_from) AS squirrels_running_from,
+   CURRENT_TIMESTAMP AS updated_at
 FROM {{ ref('int_central_park_squirrels') }} squirrels
 INNER JOIN {{ ref('int_manhattan_trees') }} trees USING (latitude, longitude)
 LEFT JOIN {{ ref('dim_neighbourhood') }} neigh USING (neighbourhood)
@@ -40,7 +41,7 @@ GROUP BY
    trees.tree_diameter,
    trees.is_tree_alive,
    trees.tree_on_curb,
-   trees.species_common_name,
+   species.tree_species_key,
    trees.sidewalk_damaged,
    trees.damaged_roots,
    trees.damaged_trunk,
