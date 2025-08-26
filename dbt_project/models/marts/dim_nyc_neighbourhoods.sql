@@ -1,6 +1,6 @@
 {{ config(materialized='table') }}
 
-
+/*
 SELECT 1 AS neighbourhood_key, 'battery park city-lower manhattan' AS neighbourhood
 UNION ALL
 SELECT 2, 'central harlem north-polo grounds'
@@ -55,4 +55,23 @@ SELECT 26, 'washington heights south'
 UNION ALL
 SELECT 27, 'west village'
 UNION ALL
-SELECT 28, 'yorkville';
+SELECT 28, 'yorkville';*/
+
+WITH neighbourhoods AS (
+    SELECT
+        DISTINCT 
+            TRIM(neighbourhood) AS neighbourhood
+    FROM {{ ref('int_manhattan_trees') }}
+
+    UNION
+
+    SELECT
+        DISTINCT 
+            neighbourhood
+    FROM {{ ref('int_air_quality') }}
+)
+
+SELECT
+    ROW_NUMBER() OVER(ORDER BY neighbourhood) AS neighbourhood_key,
+    neighbourhood
+FROM neighbourhoods

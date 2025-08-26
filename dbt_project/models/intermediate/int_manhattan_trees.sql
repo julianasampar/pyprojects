@@ -7,7 +7,7 @@ SELECT
     ROUND(longitude, 3) AS longitude,
     city,
     borough,
-    neighbourhood,
+    TRIM(neighbourhood) AS neighbourhood,
     tree_diameter,
     stump_diameter,
     CASE
