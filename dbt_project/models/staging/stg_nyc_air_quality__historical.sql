@@ -10,9 +10,10 @@ SELECT
     "Geo Join ID" AS geo_join_id,
     LOWER("Geo Place Name") AS geo_place_name,
     LOWER("Time Period") AS time_period,
-    SUBSTR("Start_Date", -4) 
+    CAST(SUBSTR("Start_Date", -4) 
         || SUBSTR("Start_Date", 0, 3) 
-        || SUBSTR("Start_Date", 4, 2) AS start_date,
+        || SUBSTR("Start_Date", 4, 2)
+        AS INT) AS start_date,
     "Data Value" AS value,
     "Message" AS message,
     CURRENT_TIMESTAMP AS updated_at
