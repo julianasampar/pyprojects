@@ -2,8 +2,8 @@
 
 SELECT 
     "Unique Squirrel Id" AS unique_squirrel_id,
-    ROUND("X", 4) AS latitude,
-    ROUND("Y", 4) AS longitude,
+    "X" AS longitude,
+    "Y" AS latitude,
     "Hectare" AS hectare,
     LOWER("Shift") AS shift,
     CAST(

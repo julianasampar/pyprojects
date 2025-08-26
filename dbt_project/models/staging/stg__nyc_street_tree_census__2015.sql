@@ -34,7 +34,7 @@ SELECT
     LOWER(borough) AS borough,
     LOWER(nta_name) AS neighbourhood,
     LOWER(state) AS state,
-    ROUND(latitude, 4) AS latitude,
-    ROUND(longitude, 4) AS longitude,
+    latitude AS latitude,
+    longitude AS longitude,
     CURRENT_TIMESTAMP AS updated_at
 FROM nyc_street_tree_census__2015
