@@ -19,3 +19,11 @@ airflow/logs/scheduler/latest
 .DS_Store
 dagster_university/data/staging/data.duckdb
 *.tmp_dagster_home_*
+.cache
+/target
+*.gitkeep
+others/archive/nyc_street_tree_census__2015.csv
+dbt_packages/*
+*.db-journal
+package-lock.yml
+.vscode/settings.json
