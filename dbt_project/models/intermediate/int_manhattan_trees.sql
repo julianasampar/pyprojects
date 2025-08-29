@@ -10,38 +10,25 @@ SELECT
     TRIM(neighbourhood) AS neighbourhood,
     tree_diameter,
     stump_diameter,
-    CASE
-        WHEN tree_status = 'alive'
-        THEN 1 ELSE 0 
-    END AS is_tree_alive,
-    CASE
-        WHEN tree_curb_location = 'oncurb'
-        THEN 1 ELSE 0 
-    END tree_on_curb,
+    tree_status,
+    {{ create_boolean_from_dict(
+        {'tree_status': 'is_tree_alive'},['alive']
+    )}},
+       {{ create_boolean_from_dict(
+        {'tree_curb_location': 'tree_on_curb'},['oncurb']
+    )}},
     species_common_name,
     species_latin_name,
-    CASE 
-        WHEN sidewalk_damaged = 'damage'
-        THEN 1 ELSE 0
-    END AS sidewalk_damaged,
-    CASE 
-        WHEN damaged_roots_by_paving_stones = 'yes'
-        OR damaged_trunk_by_lights = 'yes'
-        OR damaged_roots_by_other = 'yes'
-        THEN 1 ELSE 0
-    END AS damaged_roots,
-    CASE 
-        WHEN damaged_trunk_by_lights = 'yes'
-        OR damaged_trunk_by_rope_or_wires = 'yes'
-        OR damaged_trunk_by_other = 'yes'
-        THEN 1 ELSE 0
-    END AS damaged_trunk,
-    CASE 
-        WHEN damaged_branch_by_lights_or_wire = 'yes'
-        OR damaged_branch_by_shoes = 'yes'
-        OR damaged_branch_by_other = 'yes'
-        THEN 1 ELSE 0
-    END AS damaged_branches,
+    sidewalk_damaged,
+    IIF(damaged_roots_by_paving_stones
+        OR damaged_trunk_by_lights
+        OR damaged_roots_by_other, 1, 0) AS damaged_roots,
+    IIF(damaged_trunk_by_lights
+        OR damaged_trunk_by_rope_or_wires
+        OR damaged_trunk_by_other, 1, 0) AS damaged_trunk,
+    IIF(damaged_branch_by_lights_or_wire
+        OR damaged_branch_by_shoes
+        OR damaged_branch_by_other, 1, 0) AS damaged_branches,
     CURRENT_TIMESTAMP AS updated_at
 FROM {{ ref('stg__nyc_street_tree_census__2015') }}
 WHERE borough = 'manhattan'
