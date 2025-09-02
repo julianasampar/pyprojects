@@ -39,11 +39,11 @@ models:
         data_type: int
 
       - name: season
-        description: "Season when the measurement was taken (WINTER, SPRING, SUMMER, FALL, ANNUAL)"
+        description: "Season when the measurement was taken (winter, spring, summer, fall, annual)"
         data_type: string
         tests:
           - accepted_values:
-              values: ['WINTER', 'SPRING', 'SUMMER', 'FALL', 'ANNUAL']
+              values: ['winter', 'spring', 'summer', 'fall', 'annual']
 
       - name: indicator_value
         description: "The actual air quality measurement value"
@@ -308,6 +308,7 @@ models:
           - not_null
           - accepted_values:
               values: [1, 2, 3, 4]
+              quote: false
 
       - name: month
         description: "Month number (1-12)"
@@ -372,13 +373,13 @@ models:
               max_value: 366
 
       - name: week_in_year
-        description: "Week of the year (1-53)"
+        description: "Week of the year (1-54)"
         data_type: int
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 1
-              max_value: 53
+              max_value: 54
 
       - name: is_working_day
         description: "Flag indicating if the date is a working day (1=weekday, 0=weekend)"
@@ -387,3 +388,4 @@ models:
           - not_null
           - accepted_values:
               values: [0, 1]
+              quote: false

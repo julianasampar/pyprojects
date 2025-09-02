@@ -10,3 +10,4 @@ SELECT
     indicator_value
 FROM {{ ref('int_air_quality') }}
 LEFT JOIN {{ ref('dim_nyc_neighbourhoods') }} USING (neighbourhood)
+WHERE {{ standardize_nulls('season') }} IS NOT NULL
