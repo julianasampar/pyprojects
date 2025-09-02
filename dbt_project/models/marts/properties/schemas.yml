@@ -121,20 +121,6 @@ models:
         description: "Boolean indicator if the tree has damaged branches"
         data_type: boolean
 
-      - name: squirrels_observed_at_pm
-        description: "Number of squirrels observed during PM hours"
-        data_type: int
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-
-      - name: squirrels_observed_at_am
-        description: "Number of squirrels observed during AM hours"
-        data_type: int
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-
       - name: squirrels_running
         description: "Number of squirrels observed running"
         data_type: int
@@ -188,6 +174,22 @@ models:
         description: "Number of squirrels observed running away from humans"
         data_type: int
         tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_vocalizing
+        description: "Number of squirrels observed making vocalizations (chattering, shouting, or other sounds)"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_in_other_activities
+        description: "Number of squirrels observed on other activities, like watching, sitting, sleeping."
+        data_type: string
+        tests:
+          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
 
