@@ -18,7 +18,7 @@ SELECT
     LOWER("Location") AS location,
     "Above Ground (Height in Feet)" AS above_ground_sighter_measurement,
     LOWER("Specific Location") AS specific_location,
-    LOWER("Activies") AS activies,
+    LOWER("Activities") AS activities,
     LOWER("Interactions with Humans") AS interactions_with_humans,
     LOWER("Other Notes or Observations") AS other_notes_or_observations
 FROM nyc_central_park_squirrels_census__2020
