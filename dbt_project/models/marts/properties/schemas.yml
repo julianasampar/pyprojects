@@ -1,0 +1,393 @@
+version: 2
+
+models:
+  - name: fct_nyc_air_quality
+    description: "Fact table containing NYC air quality measurements with indicator and location details"
+    columns:
+      - name: measurement_key
+        description: "Unique identifier for each air quality measurement"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+
+      - name: indicator_key
+        description: "Foreign key to dim_air_quality_indicators table"
+        data_type: int
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_air_quality_indicators')
+              field: indicator_key
+
+      - name: neighbourhood_key
+        description: "Foreign key to dim_nyc_neighbourhoods table"
+        data_type: int
+        tests:
+          - relationships:
+              to: ref('dim_nyc_neighbourhoods')
+              field: neighbourhood_key
+
+      - name: start_date
+        description: "Start date of the measurement period"
+        data_type: int
+        tests:
+          - not_null
+
+      - name: end_date
+        description: "End date of the measurement period"
+        data_type: int
+
+      - name: season
+        description: "Season when the measurement was taken (winter, spring, summer, fall, annual)"
+        data_type: string
+        tests:
+          - accepted_values:
+              values: ['winter', 'spring', 'summer', 'fall', 'annual']
+
+      - name: indicator_value
+        description: "The actual air quality measurement value"
+        data_type: float
+        tests:
+          - not_null
+
+  - name: fct_nyc_squirrels_by_trees
+    description: "Fact table aggregating squirrel observations by tree location with behavioral metrics"
+    columns:
+      - name: observation_date
+        description: "Date when squirrels were observed"
+        data_type: int
+        tests:
+          - not_null
+
+      - name: tree_id
+        description: "Unique identifier for the tree where squirrels were observed"
+        data_type: int
+        tests:
+          - not_null
+
+      - name: neighbourhood_key
+        description: "Foreign key to dim_nyc_neighbourhoods table"
+        data_type: int
+        tests:
+          - relationships:
+              to: ref('dim_nyc_neighbourhoods')
+              field: neighbourhood_key
+
+      - name: qty_squirrels_observed
+        description: "Total number of unique squirrels observed at this tree"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: tree_diameter
+        description: "Diameter of the tree in inches"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: is_tree_alive
+        description: "Boolean indicator if the tree is alive"
+        data_type: boolean
+
+      - name: tree_on_curb
+        description: "Boolean indicator if the tree is located on the curb"
+        data_type: boolean
+
+      - name: tree_species_key
+        description: "Foreign key to dim_tree_species table"
+        data_type: int
+        tests:
+          - relationships:
+              to: ref('dim_tree_species')
+              field: tree_species_key
+
+      - name: sidewalk_damaged
+        description: "Boolean indicator if the sidewalk around the tree is damaged"
+        data_type: boolean
+
+      - name: damaged_roots
+        description: "Boolean indicator if the tree has damaged roots"
+        data_type: boolean
+
+      - name: damaged_trunk
+        description: "Boolean indicator if the tree has a damaged trunk"
+        data_type: boolean
+
+      - name: damaged_branches
+        description: "Boolean indicator if the tree has damaged branches"
+        data_type: boolean
+
+      - name: squirrels_running
+        description: "Number of squirrels observed running"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_chasing
+        description: "Number of squirrels observed chasing"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_climbing
+        description: "Number of squirrels observed climbing"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_eating
+        description: "Number of squirrels observed eating"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_foraging
+        description: "Number of squirrels observed foraging"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_approaching
+        description: "Number of squirrels observed approaching humans"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_indifferent
+        description: "Number of squirrels observed being indifferent to humans"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_running_from
+        description: "Number of squirrels observed running away from humans"
+        data_type: int
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_vocalizing
+        description: "Number of squirrels observed making vocalizations (chattering, shouting, or other sounds)"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squirrels_in_other_activities
+        description: "Number of squirrels observed on other activities, like watching, sitting, sleeping."
+        data_type: string
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: updated_at
+        description: "Timestamp when the record was last updated"
+        data_type: timestamp
+        tests:
+          - not_null
+
+  - name: dim_air_quality_indicators
+    description: "Dimension table containing air quality indicator definitions and measurements"
+    columns:
+      - name: indicator_key
+        description: "Unique identifier for each air quality indicator"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+
+      - name: indicator_name
+        description: "Name of the air quality indicator (e.g., PM2.5, Ozone)"
+        data_type: string
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+
+      - name: measure
+        description: "Unit of measurement for the indicator (e.g., mcg/m3, ppb)"
+        data_type: string
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+
+  - name: dim_nyc_neighbourhoods
+    description: "Dimension table containing NYC neighbourhood information"
+    columns:
+      - name: neighbourhood_key
+        description: "Unique identifier for each neighbourhood"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+
+      - name: neighbourhood
+        description: "Name of the NYC neighbourhood"
+        data_type: string
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+          - unique
+
+  - name: dim_tree_species
+    description: "Dimension table containing tree species information with classification"
+    columns:
+      - name: tree_species_key
+        description: "Unique identifier for each tree species"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+
+      - name: species_common_name
+        description: "Common name of the tree species (e.g., Red Oak, Sugar Maple)"
+        data_type: string
+        tests:
+          - dbt_utils.not_empty_string
+
+      - name: species_latin_name
+        description: "Scientific/Latin name of the tree species (e.g., Quercus rubra)"
+        data_type: string
+        tests:
+          - dbt_utils.not_empty_string
+
+      - name: tree_family
+        description: "Tree family classification (oak family, maple family, etc.)"
+        data_type: string
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['oak family', 'maple family', 'pine family', 'cherry family', 
+                      'linden family', 'birch family', 'ash family', 'elm family', 'other']
+
+      - name: tree_type
+        description: "Type of tree based on leaf characteristics"
+        data_type: string
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['coniferous', 'deciduous']
+
+  - name: dim_date
+    description: "Date dimension table with comprehensive date attributes for time-based analysis"
+    columns:
+      - name: date_key
+        description: "Date key in YYYYMMDD format (e.g., 20250825)"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+
+      - name: dimension_date
+        description: "Full date in ISO format (YYYY-MM-DD)"
+        data_type: date
+        tests:
+          - unique
+          - not_null
+
+      - name: year
+        description: "Four-digit year (e.g., 2025)"
+        data_type: int
+        tests:
+          - not_null
+
+      - name: quarter
+        description: "Quarter of the year (1-4)"
+        data_type: int
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4]
+              quote: false
+
+      - name: month
+        description: "Month number (1-12)"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 12
+
+      - name: day
+        description: "Day of the month (1-31)"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 31
+
+      - name: day_in_week
+        description: "Day of the week (0=Sunday, 1=Monday, ..., 6=Saturday)"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 6
+
+      - name: weekday_name
+        description: "Full name of the weekday (Monday, Tuesday, etc.)"
+        data_type: string
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+      - name: month_name
+        description: "Full name of the month (January, February, etc.)"
+        data_type: string
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['January', 'February', 'March', 'April', 'May', 'June',
+                      'July', 'August', 'September', 'October', 'November', 'December']
+
+      - name: month_abbreviation
+        description: "Three-letter month abbreviation (Jan, Feb, etc.)"
+        data_type: string
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+      - name: day_in_year
+        description: "Day of the year (1-366)"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 366
+
+      - name: week_in_year
+        description: "Week of the year (1-54)"
+        data_type: int
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 54
+
+      - name: is_working_day
+        description: "Flag indicating if the date is a working day (1=weekday, 0=weekend)"
+        data_type: int
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+              quote: false

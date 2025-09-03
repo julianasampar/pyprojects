@@ -1,6 +1,7 @@
 {% macro standardize_nulls(column_name, additional_null_values=[], case_sensitive=false) %}
     {%- set default_null_values = [
         '',
+        ' ',
         'null', 
         'unknown',
         'n/a',
@@ -29,17 +30,15 @@
         {%- set base_column = 'LOWER(TRIM(' ~ column_name ~ '))' -%}
     {%- endif -%}
 
-    {%- set result = base_column -%}
+    CASE
+        WHEN {{ base_column }} IN (
+            {%- for v in all_null_values -%}
+                '{{ v | lower if not case_sensitive else v }}'
+                {%- if not loop.last -%}, {% endif -%}
+            {%- endfor -%}
+        )
+        THEN NULL
+        ELSE {{ base_column }}
+    END
     
-    {%- for null_value in all_null_values -%}
-        {%- if not case_sensitive -%}
-            {%- set processed_value = null_value | lower -%}
-        {%- else -%}
-            {%- set processed_value = null_value -%}
-        {%- endif -%}
-        
-        {%- set result = 'NULLIF(' ~ result ~ ', \'' ~ processed_value ~ '\')' -%}
-    {%- endfor -%}
-
-    {{ result }}
 {% endmacro %}
