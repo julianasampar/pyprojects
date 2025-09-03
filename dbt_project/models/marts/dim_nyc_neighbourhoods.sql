@@ -4,7 +4,7 @@ WITH neighbourhoods AS (
     SELECT
         DISTINCT
             {{ standardize_nulls('neighbourhood') }} AS neighbourhood
-    FROM {{ ref('int_manhattan_trees') }}
+    FROM {{ ref('int_nyc_trees') }}
 
     UNION
 

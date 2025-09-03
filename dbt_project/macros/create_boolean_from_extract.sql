@@ -3,12 +3,12 @@
         CASE 
             WHEN
                 {%- for string in values %}
-                    {{ column_name }} LIKE '%{{ string }}%'
+                    LOWER({{ column_name }}) LIKE LOWER('%{{ string }}%')
                     {%- if not loop.last %} OR {% endif -%}
                 {%- endfor %}
             THEN 1 
             ELSE 0 
-        END AS "{{ key }}"
+        END AS {{ key }}
         {%- if not loop.last %}, {% endif -%}
     {%- endfor %}
 {% endmacro %}

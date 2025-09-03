@@ -31,4 +31,3 @@ SELECT
         OR damaged_branch_by_other, 1, 0) AS damaged_branches,
     CURRENT_TIMESTAMP AS updated_at
 FROM {{ ref('stg__nyc_street_tree_census__2015') }}
-WHERE borough = 'manhattan'

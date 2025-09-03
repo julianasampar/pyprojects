@@ -24,7 +24,7 @@ SELECT
     LOWER("Specific Location") AS specific_location,
     -- Extracting 2018-compatible behavioral flags
     {{ create_boolean_from_extract(
-        interactions_with_humans,
+          "'Interactions with Humans'",
         { 'was_approaching': ['approaches'],
           'was_indifferent': ['indifferent'],
           'was_running_from': ['runs from'],
@@ -32,7 +32,7 @@ SELECT
         }
     ) }},
     {{ create_boolean_from_extract(
-        activities,
+        "'Activities'",
         { 'was_running': ['running'],
           'was_chasing': ['chasing'],
           'was_climbing': ['climbing'],
