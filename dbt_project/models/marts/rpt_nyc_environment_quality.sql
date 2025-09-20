@@ -66,4 +66,4 @@ SELECT
         END, 2
     ) AS damage_percentage
 FROM prep_air_quality air
-LEFT JOIN prep_trees trees USING (neighbourhood)
+INNER JOIN prep_trees trees USING (neighbourhood)
