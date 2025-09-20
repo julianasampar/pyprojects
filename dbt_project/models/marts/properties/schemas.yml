@@ -38,12 +38,11 @@ models:
         description: "End date of the measurement period"
         data_type: int
 
-      - name: season
-        description: "Season when the measurement was taken (winter, spring, summer, fall, annual)"
-        data_type: string
+      - name: is_annual_measurement
+        description: "Indicator for annual measurements"
+        data_type: bool
         tests:
-          - accepted_values:
-              values: ['winter', 'spring', 'summer', 'fall', 'annual']
+          - not_null
 
       - name: indicator_value
         description: "The actual air quality measurement value"
@@ -210,13 +209,27 @@ models:
           - not_null
 
       - name: indicator_name
-        description: "Name of the air quality indicator (e.g., PM2.5, Ozone)"
+        description: "Name of the air quality indicator (e.g., concentration, hospitalization, deaths)"
         data_type: string
         tests:
           - not_null
           - dbt_utils.not_empty_string
 
-      - name: measure
+      - name: indicator_substance
+        description: "Name of the air quality measured substance (e.g., o3, no2, benzene)"
+        data_type: string
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+
+      - name: indicator_measure
+        description: "Measurement for the indicator (e.g., mean, estimated rate)"
+        data_type: string
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      
+      - name: measure_info
         description: "Unit of measurement for the indicator (e.g., mcg/m3, ppb)"
         data_type: string
         tests:
@@ -235,6 +248,13 @@ models:
 
       - name: neighbourhood
         description: "Name of the NYC neighbourhood"
+        data_type: string
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      
+      - name: neighbourhood_area
+        description: "Descriptive area of the neighbourhood"
         data_type: string
         tests:
           - not_null

@@ -1,13 +1,14 @@
 {{ config(materialized='table') }}
 
 SELECT
-    measurement_key,
-    indicator_key,
-    neighbourhood_key,
-    start_date,
-    end_date,
-    season,
-    indicator_value
-FROM {{ ref('int_air_quality') }}
-LEFT JOIN {{ ref('dim_nyc_neighbourhoods') }} USING (neighbourhood)
-WHERE {{ standardize_nulls('season') }} IS NOT NULL
+    air.measurement_key,
+    air.indicator_key,
+    dim.neighbourhood_key,
+    air.start_date,
+    air.end_date,
+    IIF(air.season = 'annual', 1, 0) AS is_annual_measurement,
+    air.indicator_value
+FROM {{ ref('int_air_quality') }} air
+LEFT JOIN {{ ref('dim_nyc_neighbourhoods') }} dim 
+    ON air.neighbourhood = dim.neighbourhood_area
+WHERE season IS NOT NULL

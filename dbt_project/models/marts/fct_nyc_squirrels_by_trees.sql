@@ -34,8 +34,9 @@ SELECT
    CURRENT_TIMESTAMP AS updated_at
 FROM {{ ref('int_central_park_squirrels') }} squirrels
 INNER JOIN {{ ref('int_nyc_trees') }} trees USING (latitude, longitude)
-LEFT JOIN {{ ref('dim_nyc_neighbourhoods') }} neigh USING (neighbourhood)
 LEFT JOIN {{ ref('dim_tree_species') }} species USING (species_common_name)
+LEFT JOIN {{ ref('dim_nyc_neighbourhoods') }} neigh 
+   ON neigh.neighbourhood_area = trees.neighbourhood
 GROUP BY 
    squirrels.observation_date,
    trees.tree_id,
