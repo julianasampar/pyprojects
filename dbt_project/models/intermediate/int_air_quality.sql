@@ -30,7 +30,7 @@ SELECT
     {{ standardize_nulls('indicator_name') }} AS indicator_name,
     {{ standardize_nulls('measure') }} AS measure,
     {{ standardize_nulls('measure_info') }} AS measure_info,
-    {{ standardize_nulls('neighbourhood') }} AS neighbourhood,
-    {{ standardize_nulls('season') }} AS season,
+    COALESCE({{ standardize_nulls('neighbourhood') }}, 'new york city') AS neighbourhood,
+    COALESCE({{ standardize_nulls('season') }}, 'periodic') AS season,
     indicator_value
 FROM prep_air_quality
