@@ -49,7 +49,6 @@ prep_air_quality AS (
 
 SELECT 
     neighbourhood,
-    20150101 AS reference_date_key,
     trees.amount_of_trees,
     trees.amount_of_damaged_trees,
     air.ozone_o3_value,
@@ -64,6 +63,7 @@ SELECT
             THEN (trees.amount_of_damaged_trees * 100.0) / trees.amount_of_trees 
             ELSE 0 
         END, 2
-    ) AS damage_percentage
+    ) AS damage_percentage,
+    CURRENT_TIMESTAMP AS updated_at
 FROM prep_air_quality air
 INNER JOIN prep_trees trees USING (neighbourhood)
