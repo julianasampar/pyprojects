@@ -37,12 +37,12 @@ cost AS (
 )
 SELECT 
     rental_id,
-    revenue_date,
-    customer_id,
-    film_id,
-    store_id,
-    ROUND(revenue_amount, 2) AS revenue_amount,
-    ROUND(COALESCE(cost_amount, 0), 2) AS cost_amount,
-    ROUND(revenue_amount - COALESCE(cost_amount, 0), 2) AS net_revenue_amount
+    revenue.revenue_date,
+    revenue.customer_id,
+    revenue.film_id,
+    revenue.store_id,
+    ROUND(revenue.revenue_amount, 2) AS revenue_amount,
+    ROUND(COALESCE(cost.cost_amount, 0), 2) AS cost_amount,
+    ROUND(revenue.revenue_amount - COALESCE(cost.cost_amount, 0), 2) AS net_revenue_amount
 FROM revenue
 LEFT JOIN cost USING (rental_id)
