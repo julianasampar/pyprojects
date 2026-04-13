@@ -53,7 +53,7 @@ GROUP BY month_date, film_id
 retroactive_activity AS (
     /* 
     Calculating retroactive activity for last 3 months.
-    For recent customers, applying coalesce and assuming value as zero.
+    For recent purchased films, applying coalesce and assuming value as zero.
     */
 SELECT 
     month_date,
