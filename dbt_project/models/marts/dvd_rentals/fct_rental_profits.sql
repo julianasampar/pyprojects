@@ -1,4 +1,7 @@
 -- This solution is written for SQLite querying
+{{config(
+    tags=['dvd_rentals']
+)}}
 
 /* 
     In the data, not every rental has a corresponding payment. For these cases, I'm assigning 
@@ -61,6 +64,6 @@ SELECT
     ROUND(COALESCE(revenue.expected_revenue, 0), 2) AS expected_revenue,
     ROUND(COALESCE(1 - ({{ revenue_amount }} / revenue.expected_revenue), 0), 2) AS discount_rate,
     ROUND(COALESCE(cost.cost_amount, 0), 2) AS cost_amount,
-    ROUND({{ revenue_amount }} - COALESCE(cost.cost_amount, 0), 2) AS net_revenue_amount
+    ROUND({{ revenue_amount }} - COALESCE(cost.cost_amount, 0), 2) AS profit_amount
 FROM revenue
 LEFT JOIN cost USING (rental_id)

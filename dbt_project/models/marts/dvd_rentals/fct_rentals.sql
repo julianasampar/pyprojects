@@ -1,4 +1,7 @@
 -- This solution is written for SQLite querying
+{{config(
+    tags=['dvd_rentals']
+)}}
 
 /* The only purpose of this model is to centralize common treatments 
     and joins relevant for the analysis
