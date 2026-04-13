@@ -1,8 +1,10 @@
+-- This solution is written for SQLite querying
+
 WITH revenue AS (
     /* 
     In the data, not every rental has a corresponding payment. 
         For this cases, we assign revenue date as being the rental date.
-     In addition, rentals made AND returned which don't have a corresponding payment, 
+    In addition, rentals made AND returned which don't have a corresponding payment, 
         we assume that the payment was made, but not registered, and assign the rental rate 
         as being the revenue.
     For rentals NOT RETURNED and without a corresponding payment, we assign zero as revenue.
@@ -25,7 +27,7 @@ WITH revenue AS (
 ),
 cost AS (
     /* 
-        For the cost, we must get the replacement cost of rentals NOT RETURNED.
+    For the cost, we must get the replacement cost of rentals NOT RETURNED.
     */
     SELECT 
         rental.rental_id,
