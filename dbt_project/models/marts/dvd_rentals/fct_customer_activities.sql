@@ -1,4 +1,7 @@
 -- This solution is written for SQLite querying
+{{config(
+    tags=['dvd_rentals']
+)}}
 
     /* 
     Calculating the range of dates considering the start date as
@@ -20,12 +23,15 @@ customers AS (
     SELECT 
         customer_id,
         created_date
-    FROM dim_customer__rentals
+    FROM dim_rental_customers
 ),
 daily_activity AS (
     /* 
     A cross join should be made between customers and dates.
     Then, we join rentals to see if a movie was booked at each date.
+    The daily aggregation is not necessary, but at the end of the code I'm 
+        bringing the overall rental quantity as an extra, and for that we
+        need to join by day.
     */
     SELECT 
         dates.dimension_date,
@@ -36,7 +42,7 @@ daily_activity AS (
     LEFT JOIN dvd_rental_store__rental rentals
         ON customers.customer_id = rentals.customer_id
         AND dates.dimension_date = DATE(rentals.rental_date)
-    WHERE dimension_date >= created_date
+    WHERE dates.dimension_date >= customers.created_date
 ),
 monthly_activity AS (
 SELECT 
@@ -48,6 +54,10 @@ FROM daily_activity
 GROUP BY month_date, customer_id
 ),
 retroactive_activity AS (
+    /* 
+    Calculating retroactive activity for last 3 months.
+    For recent customers, applying coalesce and assuming value as zero.
+    */
 SELECT 
     month_date,
     customer_id,
