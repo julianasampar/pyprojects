@@ -12,6 +12,6 @@ SELECT
     rentals.customer_id,
     DATE(rentals.return_date) AS return_date,
     rentals.staff_id
-FROM dvd_rental_store__rental rental
+FROM dvd_rental_store__rental rentals
 LEFT JOIN dvd_rental_store__inventory inventory USING (inventory_id)
-LEFT JOIN dvd_rental_store__film film USING (film_id)
+LEFT JOIN dvd_rental_store__film films USING (film_id)

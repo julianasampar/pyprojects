@@ -7,17 +7,17 @@
     assign it as being the film's purchase date.
 */
 SELECT 
-    film.film_id,
-    film.title,
-    film.rental_duration,
-    film.rental_rate,
-    film.replacement_cost,
+    films.film_id,
+    films.title,
+    films.rental_duration,
+    films.rental_rate,
+    films.replacement_cost,
     MIN(rentals.rental_date) AS purchase_date
-FROM dvd_rental_store__film film
+FROM dvd_rental_store__film films
 LEFT JOIN fct_rental__rentals rentals USING (film_id)
 GROUP BY 
-    film.film_id,
-    film.title,
-    film.rental_duration,
-    film.rental_rate,
-    film.replacement_cost
+    films.film_id,
+    films.title,
+    films.rental_duration,
+    films.rental_rate,
+    films.replacement_cost

@@ -5,11 +5,11 @@
         being the date for the first rental, and end date as the last
     */
 WITH RECURSIVE dates(dimension_date) AS (
-    VALUES((SELECT MIN(DATE(rental_date)) FROM dvd_rental_store__rental))
+    VALUES((SELECT MIN(rental_date) FROM fct_rental__rentals))
     UNION ALL
     SELECT date(dimension_date, '+1 day')
     FROM dates
-    WHERE dimension_date < (SELECT MAX(DATE(rental_date)) FROM dvd_rental_store__rental)
+    WHERE dimension_date < (SELECT MAX(rental_date) FROM fct_rental__rentals)
 ),
     /* 
     Getting all films and their purchase date. 
@@ -18,7 +18,7 @@ WITH RECURSIVE dates(dimension_date) AS (
     */
 films AS (
     SELECT 
-        customer_id,
+        film_id,
         purchase_date
     FROM dim_film__rentals
 ),
@@ -60,17 +60,17 @@ SELECT
     film_id,
     had_activity AS had_activity_1m,
     COALESCE(
-        LAG(had_activity, 1) OVER(PARTITION BY customer_id ORDER BY month_date)
+        LAG(had_activity, 1) OVER(PARTITION BY film_id ORDER BY month_date)
         , 0) AS had_activity_2m,
     COALESCE(
-        LAG(had_activity, 2) OVER(PARTITION BY customer_id ORDER BY month_date),
+        LAG(had_activity, 2) OVER(PARTITION BY film_id ORDER BY month_date),
         0) AS had_activity_3m,
     rental_quantity AS rental_quantity_1m,
     COALESCE(
-        LAG(rental_quantity, 1) OVER(PARTITION BY customer_id ORDER BY month_date),
+        LAG(rental_quantity, 1) OVER(PARTITION BY film_id ORDER BY month_date),
         0) AS rental_quantity_2m,
     COALESCE(
-        LAG(rental_quantity, 2) OVER(PARTITION BY customer_id ORDER BY month_date),
+        LAG(rental_quantity, 2) OVER(PARTITION BY film_id ORDER BY month_date),
         0) AS rental_quantity_3m
 FROM monthly_activity
 )
