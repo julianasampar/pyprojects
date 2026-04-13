@@ -26,6 +26,9 @@ daily_activity AS (
     /* 
     A cross join should be made between customers and dates.
     Then, we join rentals to see if a movie was booked at each date.
+    The daily aggregation is not necessary, but at the end of the code I'm 
+        bringing the overall rental quantity as an extra, and for that we
+        need to join by day.
     */
     SELECT 
         dates.dimension_date,
@@ -48,6 +51,10 @@ FROM daily_activity
 GROUP BY month_date, customer_id
 ),
 retroactive_activity AS (
+    /* 
+    Calculating retroactive activity for last 3 months.
+    For recent customers, applying coalesce and assuming value as zero.
+    */
 SELECT 
     month_date,
     customer_id,

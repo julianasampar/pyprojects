@@ -1,3 +1,11 @@
+-- This solution is written for SQLite querying
+
+/*
+    This dimension aims to treat customers data.
+    The values for creation_date are posterior to the actual rental dates,
+    which doesn't make sense. Here, we get the date of the first rental and 
+    assign it as being the customer's creation date.
+*/
 SELECT 
     customer_id,
     first_name,
