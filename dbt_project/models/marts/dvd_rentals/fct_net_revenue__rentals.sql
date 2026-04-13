@@ -48,3 +48,5 @@ SELECT
     ROUND(revenue.revenue_amount - COALESCE(cost.cost_amount, 0), 2) AS net_revenue_amount
 FROM revenue
 LEFT JOIN cost USING (rental_id)
+
+--- Include rental_duration and rental_rate proportion into the calculation
