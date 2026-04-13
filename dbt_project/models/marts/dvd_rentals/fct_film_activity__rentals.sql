@@ -12,43 +12,43 @@ WITH RECURSIVE dates(dimension_date) AS (
     WHERE dimension_date < (SELECT MAX(DATE(rental_date)) FROM dvd_rental_store__rental)
 ),
     /* 
-    Getting all customers and their created date. 
-    Activity should not be calculated prior to each customer's
-        creation date.
+    Getting all films and their purchase date. 
+    Activity should not be calculated prior to each films's
+        purchase date.
     */
-customers AS (
+films AS (
     SELECT 
         customer_id,
-        created_date
-    FROM dim_customer__rentals
+        purchase_date
+    FROM dim_film__rentals
 ),
 daily_activity AS (
     /* 
-    A cross join should be made between customers and dates.
-    Then, we join rentals to see if a movie was booked at each date.
+    A cross join should be made between films and dates.
+    Then, we join rentals to see if the movie was booked at each date.
     The daily aggregation is not necessary, but at the end of the code I'm 
         bringing the overall rental quantity as an extra, and for that we
         need to join by day.
     */
     SELECT 
         dates.dimension_date,
-        customers.customer_id,
+        films.film_id,
         rentals.rental_id IS NOT NULL AS had_activity
-    FROM customers
+    FROM films
     CROSS JOIN dates
-    LEFT JOIN dvd_rental_store__rental rentals
-        ON customers.customer_id = rentals.customer_id
+    LEFT JOIN fct_rental__rentals rentals
+        ON films.film_id = rentals.film_id
         AND dates.dimension_date = DATE(rentals.rental_date)
-    WHERE dimension_date >= created_date
+    WHERE dates.dimension_date >= films.purchase_date
 ),
 monthly_activity AS (
 SELECT 
     DATE(dimension_date, 'start of month') AS month_date,
-    customer_id,
+    film_id,
     SUM(had_activity) AS rental_quantity,
     SUM(had_activity) > 0 AS had_activity
 FROM daily_activity
-GROUP BY month_date, customer_id
+GROUP BY month_date, film_id
 ),
 retroactive_activity AS (
     /* 
@@ -57,7 +57,7 @@ retroactive_activity AS (
     */
 SELECT 
     month_date,
-    customer_id,
+    film_id,
     had_activity AS had_activity_1m,
     COALESCE(
         LAG(had_activity, 1) OVER(PARTITION BY customer_id ORDER BY month_date)
@@ -76,20 +76,20 @@ FROM monthly_activity
 )
 SELECT 
     month_date,
-    customer_id,
+    film_id,
     CASE
         WHEN had_activity_1m AND had_activity_2m AND had_activity_3m
-            THEN 'Loyal Customers'
+            THEN 'High-demand Movies'
         WHEN had_activity_1m AND had_activity_2m
-            THEN 'Engaging Customers'
+            THEN 'Consistently booked Movies'
         WHEN had_activity_1m
-            THEN 'Sporadic Customers'
+            THEN 'Occasionally booked Movies'
         WHEN NOT had_activity_1m AND had_activity_2m
-            THEN 'Disengaging Customers'
+            THEN 'Low-demand Movies'
         WHEN NOT had_activity_1m AND NOT had_activity_2m AND had_activity_3m
-            THEN 'At Risk Customers'
+            THEN 'Underperforming Movies'
         WHEN NOT had_activity_1m AND NOT had_activity_2m AND NOT had_activity_3m
-            THEN 'Churned Customers'
-    END AS customer_activity,
+            THEN 'Stale Movies'
+    END AS film_activity,
     rental_quantity_1m + rental_quantity_2m + rental_quantity_3m AS rental_quantity_3m
 FROM retroactive_activity

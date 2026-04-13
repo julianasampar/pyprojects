@@ -7,15 +7,15 @@
     assign it as being the customer's creation date.
 */
 SELECT 
-    customer_id,
-    first_name,
-    last_name,
-    email,
-    MIN(DATE(rental_date)) AS created_date
-FROM dvd_rental_store__customer
-LEFT JOIN dvd_rental_store__rental USING (customer_id)
+    customers.customer_id,
+    customers.first_name,
+    customers.last_name,
+    customers.email,
+    MIN(rentals.rental_date) AS created_date
+FROM dvd_rental_store__customer customers
+LEFT JOIN fct_rental__rentals rentals USING (customer_id)
 GROUP BY 
-    customer_id,
-    first_name,
-    last_name,
-    email
+    customers.customer_id,
+    customers.first_name,
+    customers.last_name,
+    customers.email

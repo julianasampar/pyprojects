@@ -39,7 +39,7 @@ daily_activity AS (
     LEFT JOIN dvd_rental_store__rental rentals
         ON customers.customer_id = rentals.customer_id
         AND dates.dimension_date = DATE(rentals.rental_date)
-    WHERE dimension_date >= created_date
+    WHERE dates.dimension_date >= customers.created_date
 ),
 monthly_activity AS (
 SELECT 
