@@ -94,5 +94,6 @@ SELECT
         WHEN NOT had_activity_1m AND NOT had_activity_2m AND NOT had_activity_3m
             THEN 'Churned Customers'
     END AS customer_activity,
+    rental_quantity_1m,
     rental_quantity_1m + rental_quantity_2m + rental_quantity_3m AS rental_quantity_3m
 FROM retroactive_activity
