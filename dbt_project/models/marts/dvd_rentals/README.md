@@ -8,12 +8,8 @@ The database contains the ERD (Entity Relationship Diagram) below.
 This file contains instructions to accurately answer or evaluate the questions listed on the DA Onboarding. If you spot any error or suggestion, please let the Onboarding team know!
 
 
-
-
-
 ## Screenshots
-
-![App Screenshot](https://dummyimage.com/468x300?text=App+Screenshot+Here)
+![alt text](image-1.png)
 
 
 ## Question 1: fct_rental_profits
@@ -56,7 +52,17 @@ Level of Difficulty: Medium-High
 
 
 #### Criterias for the Solution: 
-- 
+- Engineer gets range of date, with monthly or daily intervals. Ideally, engineer calculates range by getting the minimum and maximum rental date from rental table, but other ranges are acceptable.
+- Engineer gets all registered customers from customers table.
+- Engineer performs a cross join between range of dates and customers.
+- Engineer joins the result to the rental table on customer_id and dates (range_date = rental_date). 
+- Engineer creates a flag or an aggregation calculations that showcases if customer rented a film at each date of range. Some examples of calculations can be 'rental_id IS NOT NULL', 'COUNT(DISTINCT rental_id)', 'COUNT(DISTINCT rental_id) > 0' or similars. Evaluate the granularity to see which fits best.
+- Engineer creates retroactive calculations using window functions such as LAG() to retrieve activity from the previous month and the month before that.
+- Engineer creates loyalty and churn buckets correctly as described in the question statement.
+- Engineer notices that the column 'create_date' in customers table is not consistent with what rental data is showing.
+- Engineer filters out date ranges prior to the customer's creation date, and calculates the loyalty/churn buckets starting from it's first rental.
+
+
 ## Other Tips
 
 - The years of the data between tables are confusing, ignore them when performing analysis - consider only the months.
