@@ -8,9 +8,6 @@ The database contains the ERD (Entity Relationship Diagram) below.
 This file contains instructions to accurately answer or evaluate the questions listed on the DA Onboarding. If you spot any error or suggestion, please let the Onboarding team know!
 
 
-## Screenshots
-![alt text](image-1.png)
-
 
 ## Question 1: fct_rental_profits
 #### Suppose you are the DVD Rental Store manager, what is the first metric you would like to know? The profits, of course! Here, your first activity is to create a fct_rental_profits that returns the net value of rentals by day.
