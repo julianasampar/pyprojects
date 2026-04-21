@@ -29,6 +29,7 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer calculates the expected amount by getting the length of the rental (days_booked = date_diff('day', rental_date, return_date)), dividing it by the rental_duration and multiplying the result for the rental_rate. Both 'rental_duration' and 'rental_rate' must be pulled from film table, which must be joined through inventory table.
 - Engineer displays additional dimensions, such as customer_id, film_id, store_id.
 - Engineer displays additional calculations, such as expected_revenue and discount_rate.
+
 ## Question 2: fct_customer_activities
 #### Now, you might want to think about specific marketing campaigns targeting active and/or churned customers. For that, it would be interesting to understand the loyalty and rental activity of said customers. Create a fct_customer_activity and categorize the customer's activities into: 
 #### Loyalty: 
@@ -58,6 +59,15 @@ Level of Difficulty: Medium-High
 - Engineer creates loyalty and churn buckets correctly as described in the question statement.
 - Engineer notices that the column 'create_date' in customers table is not consistent with what rental data is showing.
 - Engineer filters out date ranges prior to the customer's creation date, and calculates the loyalty/churn buckets starting from it's first rental.
+
+## Question 2 (Bonus): fct_activities_generator
+####  Try to apply the same logic to movies! You can get a systematic view of which films are constantly being rented and which ones might be worth discontinuing. Think about using macros and Jinja to optimize code and generate both models! 
+
+Level of Difficulty: Medium-High
+
+#### Tips:
+
+#### Criterias for the Solution: 
 
 
 ## Other Tips
