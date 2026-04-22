@@ -79,6 +79,7 @@ Level of Difficulty: Medium
 
 #### Criterias for the Solution: 
 - Solution is open-ended. The end goal is for the engineer to make the code that generates customer and film activity buckets DRYer using Jinja and/or Macros.
+- An example is under the fct_film_activities file.
 - Evaluation should consider how the engineer identified repeated SQL patterns and abstracted them into macros or Jinja templates, replaced duplicated logic with reusable calls, and ensured these abstractions are maintainable.
 
 
