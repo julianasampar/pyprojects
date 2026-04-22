@@ -7,6 +7,11 @@ In the database you find information about the stores, customers and rented film
 The database contains the ERD (Entity Relationship Diagram) below.
 This file contains instructions to accurately answer or evaluate the questions listed on the DA Onboarding. If you spot any error or suggestion, please let the Onboarding team know!
 
+#### Content:
+- [Question 1: fct_rental_profits](https://github.com/julianasampar/pyprojects/tree/main/dbt_project/models/marts/dvd_rentals#question-1-fct_rental_profits:~:text=Question%201%3A%20fct_rental_profits)
+- [Question 2: fct_customer_activities](https://github.com/julianasampar/pyprojects/tree/main/dbt_project/models/marts/dvd_rentals#question-2-fct_customer_activities:~:text=Question%202%3A%20fct_customer_activities)
+- [Question 2 (Bonus): fct_activities_generator](https://github.com/julianasampar/pyprojects/tree/main/dbt_project/models/marts/dvd_rentals#question-2-fct_customer_activities:~:text=Question%202%20(Bonus)%3A%20fct_activities_generator)
+- [Question 3: fct_film_inventory](https://github.com/julianasampar/pyprojects/tree/main/dbt_project/models/marts/dvd_rentals#question-2-fct_customer_activities:~:text=Question%203%3A%20fct_film_inventory)
 
 
 ## Question 1: fct_rental_profits
