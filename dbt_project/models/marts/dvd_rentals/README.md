@@ -50,6 +50,7 @@ Level of Difficulty: Medium-High
 
 
 #### Criterias for the Solution: 
+The criterias below are listed in order from must have to nice to have.
 - Engineer gets range of date, with monthly or daily intervals. Ideally, engineer calculates range by getting the minimum and maximum rental date from rental table, but other ranges are acceptable.
 - Engineer gets all registered customers from customers table.
 - Engineer performs a cross join between range of dates and customers.
@@ -81,10 +82,18 @@ Level of Difficulty: Low
 - Consider that, to be able to calculate the storage amount at a given moment, you need to take into account the moment before.
 
 #### Criterias for the Solution: 
+The criterias below are listed in order from must have to nice to have.
+- The inventory table assigns an id to all available movies at each store, the table itself is not a inventory movement view. To built that, engineer must first define a static view of the inventory, pulling all data from inventory table and assigining a start_date.
+- Engineer must aggregate data from inventory table by film and store to check how many films there are in each store.
+- Engineer must get inventory movements (when a film leaves inventory and when it's added back) from rental table.
+- Engineer identifies that a film leaving inventory can be captured using a flag or an aggregation at the rental_id level, using rental_date as the reference.
+- Engineer identifies that a film being added back to the inventory can be captured using a flag or an aggregation at the rental_id level, using return_date as the reference. Engineer remember to filter our NULL return_dates.
+- The end result must take into consideration that an inventory view from a certain day needs to be calculated on top of the view from the same object from at it's prior state. Engineer combines data from each logic and applies rolling sum or similar function to compute the storage volume at a given point in time.
 
 
 ## Other Tips & Instructions
 
+- Look at the filmes under dvd_rentals/ folder to use the developed code as reference to guide evaluations.
 - The years of the data between tables are confusing, ignore them when performing analysis - consider only the months.
-- You should treat creation_date of the table customers, because they don't make sense when compared to the rental activity. Create a new dim_customers where the creation_date is the date of the first rental.
-- The additional steps made in this repository towards lineage modularity (like creating intermediate models and dimensions) are not mandatory for the solution, but must be taken into consideration as a plus when evaluating.
+- The column creation_date on table customers should be treated, because they don't make sense when compared to the rental activity. If engineer is using that column, they should create a new model (example dim_customers) treating the creation_date as the date of the first rental.
+- The additional steps made on the code under dvd_rentals/ folders towards lineage modularity (like creating intermediate models and dimensions) are not mandatory for the solution, but must be taken into consideration as a plus when evaluating others.
