@@ -82,6 +82,9 @@ Level of Difficulty: Medium
 - An example is under the fct_film_activities file.
 - Evaluation should consider how the engineer identified repeated SQL patterns and abstracted them into macros or Jinja templates, replaced duplicated logic with reusable calls, and ensured these abstractions are maintainable.
 
+### What solution might look like:
+<img width="1976" height="1152" alt="image" src="https://github.com/user-attachments/assets/cc5e5b7d-a5d0-4e91-8ab1-1984ff59b653" />
+
 
 ## Question 3: fct_film_inventory
 ####  To wrap things up, an important aspect of store management is inventory. As a manager, it’s essential to track the volume of films coming in and out. To support this, build a fct_film_inventory table that logs the number of films per store and tracks all historical rental movements that impacted inventory.
