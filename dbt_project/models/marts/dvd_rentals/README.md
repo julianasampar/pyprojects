@@ -30,6 +30,8 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer displays additional dimensions, such as customer_id, film_id, store_id.
 - Engineer displays additional calculations, such as expected_revenue and discount_rate.
 
+#### What solution looks like:
+
 ## Question 2: fct_customer_activities
 #### Now, you might want to think about specific marketing campaigns targeting active and/or churned customers. For that, it would be interesting to understand the loyalty and rental activity of said customers. Create a fct_customer_activity and categorize the customer's activities into: 
 #### Loyalty: 
@@ -61,6 +63,9 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer notices that the column 'create_date' in customers table is not consistent with what rental data is showing.
 - Engineer filters out date ranges prior to the customer's creation date, and calculates the loyalty/churn buckets starting from it's first rental.
 
+#### What solution looks like:
+
+
 ## Question 2 (Bonus): fct_activities_generator
 ####  Try to apply the same logic to movies! You can get a systematic view of which films are constantly being rented and which ones might be worth discontinuing. Think about using macros and Jinja to optimize code and generate both models! 
 
@@ -69,6 +74,8 @@ Level of Difficulty: Medium-High
 #### Tips:
 
 #### Criterias for the Solution: 
+
+#### What solution looks like:
 
 
 ## Question 3: fct_film_inventory
@@ -89,6 +96,8 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer identifies that a film leaving inventory can be captured using a flag or an aggregation at the rental_id level, using rental_date as the reference.
 - Engineer identifies that a film being added back to the inventory can be captured using a flag or an aggregation at the rental_id level, using return_date as the reference. Engineer remember to filter our NULL return_dates.
 - The end result must take into consideration that an inventory view from a certain day needs to be calculated on top of the view from the same object from at it's prior state. Engineer combines data from each logic and applies rolling sum or similar function to compute the storage volume at a given point in time.
+
+#### What solution looks like:
 
 
 ## Other Tips & Instructions
