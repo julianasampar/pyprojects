@@ -31,6 +31,7 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer displays additional calculations, such as expected_revenue and discount_rate.
 
 #### What solution looks like:
+<img width="1970" height="1292" alt="image" src="https://github.com/user-attachments/assets/71f84c65-cc4a-42f5-8961-035dbca964fb" />
 
 ## Question 2: fct_customer_activities
 #### Now, you might want to think about specific marketing campaigns targeting active and/or churned customers. For that, it would be interesting to understand the loyalty and rental activity of said customers. Create a fct_customer_activity and categorize the customer's activities into: 
@@ -64,6 +65,7 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer filters out date ranges prior to the customer's creation date, and calculates the loyalty/churn buckets starting from it's first rental.
 
 #### What solution looks like:
+<img width="1450" height="1222" alt="image" src="https://github.com/user-attachments/assets/8e66b862-49fe-44ca-bc24-1b09829b7098" />
 
 
 ## Question 2 (Bonus): fct_activities_generator
@@ -98,7 +100,7 @@ The criterias below are listed in order from must have to nice to have.
 - The end result must take into consideration that an inventory view from a certain day needs to be calculated on top of the view from the same object from at it's prior state. Engineer combines data from each logic and applies rolling sum or similar function to compute the storage volume at a given point in time.
 
 #### What solution looks like:
-
+<img width="840" height="1240" alt="image" src="https://github.com/user-attachments/assets/948b7c4a-9e7e-47f0-9229-07025b54ff5c" />
 
 ## Other Tips & Instructions
 
