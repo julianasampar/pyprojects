@@ -17,7 +17,7 @@ SELECT
     films.replacement_cost,
     MIN(rentals.rental_date) AS purchase_date
 FROM dvd_rental_store__film films
-LEFT JOIN fct_rentals rentals USING (film_id)
+LEFT JOIN {{ ref('int_rentals') }} rentals USING (film_id)
 GROUP BY 
     films.film_id,
     films.title,
