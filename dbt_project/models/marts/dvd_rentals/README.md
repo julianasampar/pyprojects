@@ -65,8 +65,7 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer filters out date ranges prior to the customer's creation date, and calculates the loyalty/churn buckets starting from it's first rental.
 
 #### What solution looks like:
-<img width="1450" height="1222" alt="image" src="https://github.com/user-attachments/assets/8e66b862-49fe-44ca-bc24-1b09829b7098" />
-
+<img width="2164" height="1126" alt="image" src="https://github.com/user-attachments/assets/7da890f3-bda8-4d2b-9ffe-f6a5abc32ae5" />
 
 ## Question 2 (Bonus): fct_activities_generator
 ####  Try to apply the same logic to movies! You can get a systematic view of which films are constantly being rented and which ones might be worth discontinuing. Think about using macros and Jinja to optimize code and generate both models! 
@@ -100,7 +99,7 @@ The criterias below are listed in order from must have to nice to have.
 - The end result must take into consideration that an inventory view from a certain day needs to be calculated on top of the view from the same object from at it's prior state. Engineer combines data from each logic and applies rolling sum or similar function to compute the storage volume at a given point in time.
 
 #### What solution looks like:
-<img width="840" height="1240" alt="image" src="https://github.com/user-attachments/assets/948b7c4a-9e7e-47f0-9229-07025b54ff5c" />
+<img width="2156" height="1156" alt="image" src="https://github.com/user-attachments/assets/07e70dfa-57ac-40ba-93a2-cbffc642a11f" />
 
 ## Other Tips & Instructions
 
