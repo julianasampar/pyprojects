@@ -75,7 +75,7 @@ The criterias below are listed in order from must have to nice to have.
 ## Question 2 (Bonus): fct_activities_generator
 ####  Try to apply the same logic to movies! You can get a systematic view of which films are constantly being rented and which ones might be worth discontinuing. Think about using macros and Jinja to optimize code and generate both models! 
 
-Level of Difficulty: Medium-High
+Level of Difficulty: Medium
 
 #### Tips:
 
