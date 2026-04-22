@@ -75,13 +75,12 @@ The criterias below are listed in order from must have to nice to have.
 ## Question 2 (Bonus): fct_activities_generator
 ####  Try to apply the same logic to movies! You can get a systematic view of which films are constantly being rented and which ones might be worth discontinuing. Think about using macros and Jinja to optimize code and generate both models! 
 
-Level of Difficulty: Medium-High
-
-#### Tips:
+Level of Difficulty: Medium
 
 #### Criterias for the Solution: 
-
-#### What solution looks like:
+- Solution is open-ended. The end goal is for the engineer to make the code that generates customer and film activity buckets DRYer using Jinja and/or Macros.
+- An example is under the fct_film_activities file.
+- Evaluation should consider how the engineer identified repeated SQL patterns and abstracted them into macros or Jinja templates, replaced duplicated logic with reusable calls, and ensured these abstractions are maintainable.
 
 
 ## Question 3: fct_film_inventory
