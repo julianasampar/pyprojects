@@ -8,11 +8,11 @@
         being the date for the first rental, and end date as the last
     */
 WITH RECURSIVE dates(dimension_date) AS (
-    VALUES((SELECT MIN(rental_date) FROM fct_rentals))
+    VALUES((SELECT MIN(rental_date) FROM {{ ref('int_rentals') }}))
     UNION ALL
     SELECT date(dimension_date, '+1 day')
     FROM dates
-    WHERE dimension_date < (SELECT MAX(rental_date) FROM fct_rentals)
+    WHERE dimension_date < (SELECT MAX(rental_date) FROM {{ ref('int_rentals') }})
 ),
     /* 
     Getting all films and their purchase date. 
@@ -39,7 +39,7 @@ daily_activity AS (
         rentals.rental_id IS NOT NULL AS had_activity
     FROM films
     CROSS JOIN dates
-    LEFT JOIN fct_rentals rentals
+    LEFT JOIN {{ ref('int_rentals') }} rentals
         ON films.film_id = rentals.film_id
         AND dates.dimension_date = DATE(rentals.rental_date)
     WHERE dates.dimension_date >= films.purchase_date
