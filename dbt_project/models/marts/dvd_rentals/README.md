@@ -70,7 +70,21 @@ Level of Difficulty: Medium-High
 #### Criterias for the Solution: 
 
 
-## Other Tips
+## Question 3: fct_film_inventory
+####  To wrap things up, an important aspect of store management is inventory. As a manager, it’s essential to track the volume of films coming in and out. To support this, build a fct_film_inventory table that logs the number of films per store and tracks all historical rental movements that impacted inventory.
+
+Level of Difficulty: Low
+
+#### Tips:
+- The logic will require a time-based view built on top of an initial static snapshot of the system.
+- Think about what represents a film leaving inventory and being added back.
+- Consider that, to be able to calculate the storage amount at a given moment, you need to take into account the moment before.
+
+#### Criterias for the Solution: 
+
+
+## Other Tips & Instructions
 
 - The years of the data between tables are confusing, ignore them when performing analysis - consider only the months.
 - You should treat creation_date of the table customers, because they don't make sense when compared to the rental activity. Create a new dim_customers where the creation_date is the date of the first rental.
+- The additional steps made in this repository towards lineage modularity (like creating intermediate models and dimensions) are not mandatory for the solution, but must be taken into consideration as a plus when evaluating.

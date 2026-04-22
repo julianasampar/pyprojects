@@ -3,6 +3,17 @@
     tags=['dvd_rentals']
 )}}
 
+/* 
+    An inventory is a time-based view built on top of an initial static snapshot of the system.
+    Here, we aim to replicate that.
+    First, we define a reference date, in this case, the day before the first rental, when the 
+        inventory was fully stocked and under control.
+    Next, we incorporate rental movements. The rental_date represents when a film leaves inventory, 
+        while the return_date indicates when it is added back.
+    To accurately calculate the number of films available at any given point in time, we need a 
+        reference from it's prior state. For this reason, we apply a rolling sum over these movements.
+*/
+
 WITH min_date AS (
     SELECT 
         DATE(MIN(rental_date), '-1 day') AS day0_date
