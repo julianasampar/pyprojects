@@ -3,7 +3,7 @@
     tags=['dvd_rentals']
 )}}
 
-{{ activity_generator(dimension='film', dimension_date='purchase_date', source='dim_film') }}
+{{ activity_generator(dimension='film', dimension_date='purchase_date', source='dim_films') }}
 
 SELECT 
     month_date,

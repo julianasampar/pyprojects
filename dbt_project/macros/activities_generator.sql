@@ -23,12 +23,12 @@ daily_activity AS (
     */
     SELECT 
         dates.dimension_date,
-        films.film_id,
+        {{ dimension }}.{{ dimension }}_id,
         rentals.rental_id IS NOT NULL AS had_activity
     FROM {{ dimension }}
     CROSS JOIN dates
     LEFT JOIN {{ ref('int_rentals') }} rentals
-        ON {{ dimension }}.{{ dimension }}_id = rentals.{{ dimension }}
+        ON {{ dimension }}.{{ dimension }}_id = rentals.{{ dimension }}_id
         AND dates.dimension_date = DATE(rentals.rental_date)
     WHERE dates.dimension_date >= {{ dimension }}.{{ dimension_date }}
 ),
