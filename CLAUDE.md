@@ -1,0 +1,1 @@
+- When reviewing an PR, always start with "Howdyyyy"
