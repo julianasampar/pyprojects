@@ -15,7 +15,7 @@ metadata:
 | `--data-warehouse` | No | Name of the Data Warehouse connection the Agent should invoke |
 | `--source-domain` | No | Data domain of the set of sources. The Agent should be able to find the pattern and read only the tables from the specified domain.  |
 | `--source-schema` | No | Specific schema for the set of sources, if applicable.  |
-| `--log-path` | No | Path for logging and storing the interaction and discovery analysis results.  |
+| `--storage-path` | No | Path for logging and storing the interaction and discovery analysis results.  |
 
 
 ## Quick Guide
@@ -82,17 +82,35 @@ If a spec file path is provided, go directly to Mode 2.
 3. **Categorical Values**: For each table and for each non-key categorical columns only, retrieve the possible distinct values. 
 
 3. **Orchestration**: For each table, identify the ETL update timestamp column, along with the scheduling strategy and refresh latency. If it is not possible to collect the information, skip this step. Some examples are: 
-   - A source materialized as table, being droped and created on every daily run.
-   - A source materialized as table, being droped and created every five hours.
-   - An incremental source, which inserts and updates records from the last three hours. 
-   - An incremental source, which inserts and updates records from the previous day.
+   > A source materialized as table, being droped and created on every daily run.
+
+   > A source materialized as table, being droped and created every five hours.
+
+   > An incremental source, which inserts and updates records from the last three hours. 
+
+   > An incremental source, which inserts and updates records from the previous day.
 
 4. **Relationships**: Once the PKs are laid out, identify the possibilities of Primary Key-Foreign Key combinations between the set of sources and their meaning. Some examples are: 
-   - The source table transactions contains a FK column customer_id. The table customers contains a PK column customer_id. You identify that transactions and customers relates to each other through customer_id, and this relationship allows the user to identify each customer at the transaction level.
+   > The source table transactions contains a FK column customer_id. The table customers contains a PK column customer_id. You identify that transactions and customers relates to each other through customer_id, and this relationship allows the user to identify each customer at the transaction level.
+
+   > The source table purchase_orders contains a FK column supplier_id. The table suppliers contains a PK column supplier_id. You identify that purchase_orders and suppliers relate to each other through supplier_id, and this relationship allows the user to identify which supplier is responsible for each purchase order.
+
+   > The source table support_tickets contains a FK column agent_id. The table support_agents contains a PK column agent_id. You identify that support_tickets and support_agents relate to each other through agent_id, and this relationship allows the user to identify the assigned support agent for each ticket.
 
 ### Step 3: Data Behavior
-4. **Filter an Example**: 
+1. **Set of Records**: Identify the most important categorical features and filter a group of values to understand the underlying behavior of the data. Iterate on the possible values of the most important features, analyze the behavior and register your conclusions. The features might be date, customer, status, type, or others. Some examples are:
+   > The source table transactions contain information on customer, payment type, status, date. To understand the data, you filter out the customer = "10000001", payment_type = "credit", date = "2025-01-01". With the results, you observe that the customer made 1 transaction that went throught the status "created", "authorized", "captured" and "chargebacked" in the same day. You also may observe that the transaction amount for chargebacked transactions is negative.
+
+   > The source table inventory_forecast contains information on warehouse_id, product_category, forecast_date, and forecasted_amount. To understand the data, you filter out the warehouse_id = "WH102" and product_category = "electronics". You observe that the table contains the aggregated forecast predictions by day, and to compute the expected revenue for the next month you need to get the forecasted amount of the last day of the month.
+
+   > The source table customer_support_metrics contains information on support_team, status, ticket_priority, resolution_date, and handling_time. To understand the data, you filter out the support_team = "LATAM_ENTERPRISE" and ticket_priority = "high". You observe that each row corresponds to a change in status of the same ticket, and that only when the status is "completed" the resolution_date is assigned.
 
 ### Step 4: Data Description
 
-5. **Mandatory conceptual design**: 
+1. **Column Descriptions**: Using the knowledge obtained from the previous steps, write descriptions for every column in each source.
+
+2. **Business Descriptions**: Using the knowledge observed in the data from the previous steps, connect them to business knowledge from the specified domain and write additional non-data related information.
+
+### Step 5: Logging the Results
+1. **File Creation**: Create a file for each source under the provided storage path. If path not provided, write under the default path. The file name should be written as "<name_of_source>__<current_timestamp>".
+   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/resources
