@@ -9,10 +9,12 @@
     First, we define a reference date, in this case, the day before the first rental, when the 
         inventory was fully stocked and under control.
     Next, we incorporate rental movements. The rental_date represents when a film leaves inventory, 
-        while the return_date indicates when it is added back.
+        while the return_date indicates when it is added back. We are assuming that there was no
+        movies replaced during this period of time. 
     To accurately calculate the number of films available at any given point in time, we need a 
         reference from it's prior state. For this reason, we apply a rolling sum over these movements.
-    Observe that there are movies which where rented and returned in the same day.
+    Observe that there are movies rented and returned in the same day. To log each individual movement,
+         we must calculate the running sum using the rental timestamp date.
 */
 
 WITH min_date AS (
