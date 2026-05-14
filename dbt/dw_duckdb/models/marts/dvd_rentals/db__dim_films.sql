@@ -16,7 +16,7 @@ SELECT
     films.rental_rate,
     films.replacement_cost,
     MIN(rentals.rental_date) AS purchase_date
-FROM {{ ref('db__film') }} films
+FROM read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/film.csv') films
 LEFT JOIN {{ ref('db__int_rentals') }} rentals USING (film_id)
 GROUP BY 
     films.film_id,

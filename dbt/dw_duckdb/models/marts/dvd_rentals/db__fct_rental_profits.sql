@@ -28,28 +28,28 @@ WITH revenue AS (
         rental.customer_id,
         inventory.film_id,
         inventory.store_id,
-        DATE(COALESCE(payment.payment_date, rental.rental_date)) AS revenue_date,
-        DATE(rental.return_date) AS return_date,
-        (DATE(rental.return_date) - DATE(rental.rental_date)) AS days_booked,
+        CAST(COALESCE(payment.payment_date, rental.rental_date) AS DATE) AS revenue_date,
+        CAST(rental.return_date AS DATE) AS return_date,
+        (CAST(rental.return_date AS DATE) - CAST(rental.rental_date AS DATE)) AS days_booked,
         CASE
             WHEN days_booked < film.rental_duration
                 THEN film.rental_rate
             ELSE ROUND(( days_booked / film.rental_duration ), 2) * film.rental_rate
         END AS expected_revenue,
         payment.amount AS payment_amount
-    FROM {{ ref('db__rental') }} rental
-    LEFT JOIN {{ ref('db__payment') }} payment USING (rental_id, customer_id)
-    LEFT JOIN {{ ref('db__inventory') }} inventory USING (inventory_id)
-    LEFT JOIN {{ ref('db__film') }} film USING (film_id)
+    FROM read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/rental.csv') rental
+    LEFT JOIN read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/payment.csv') payment USING (rental_id, customer_id)
+    LEFT JOIN read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/inventory.csv') inventory USING (inventory_id)
+    LEFT JOIN read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/film.csv') film USING (film_id)
 ),
 cost AS (
     -- For the cost, we must get the replacement cost of rentals NOT RETURNED.
     SELECT 
         rental.rental_id,
         film.replacement_cost AS cost_amount -- Replacement cost should not be NULL
-    FROM {{ ref('db__rental') }} rental
-    LEFT JOIN {{ ref('db__inventory') }} inventory USING (inventory_id)
-    LEFT JOIN {{ ref('db__film') }} film USING (film_id)
+    FROM read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/rental.csv') rental
+    LEFT JOIN read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/inventory.csv') inventory USING (inventory_id)
+    LEFT JOIN read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/film.csv') film USING (film_id)
     WHERE rental.return_date IS NULL
 )
 SELECT

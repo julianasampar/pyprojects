@@ -31,3 +31,4 @@ dbt/dbt_packages
 run_csv.py
 dbt/logs
 /logs
+dbt/dbt_database.duckdb

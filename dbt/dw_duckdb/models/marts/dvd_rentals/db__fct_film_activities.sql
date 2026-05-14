@@ -3,10 +3,10 @@
     tags=['dvd_rentals']
 )}}
 
-{{ activity_generator(dimension='film', dimension_date='purchase_date', source='dim_films') }}
+{{ activity_generator(dimension='film', dimension_date='purchase_date', source='db__dim_films') }}
 
 SELECT
-    {{ generate_surrogate_key(['month_date', 'film_id']) }} AS film_activity_id,
+    {{ dbt_utils.generate_surrogate_key(['month_date', 'film_id']) }} AS film_activity_id,
     month_date,
     film_id,
     CASE

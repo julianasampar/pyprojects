@@ -8,11 +8,11 @@
         being the date for the first rental, and end date as the last
     */
 WITH RECURSIVE dates(dimension_date) AS (
-    SELECT MIN(DATE(rental_date)) AS dimension_date FROM {{ ref('db__rental') }}
+    SELECT MIN(rental_date) AS dimension_date FROM {{ ref('db__int_rentals') }}
     UNION ALL
     SELECT DATE_ADD(dimension_date, INTERVAL 1 day)
     FROM dates
-    WHERE dimension_date < (SELECT MAX(DATE(rental_date)) FROM {{ ref('db__rental') }})
+    WHERE dimension_date < (SELECT MAX(rental_date) FROM {{ ref('db__int_rentals') }})
 ),
     /* 
     Getting all customers and their created date. 
@@ -23,7 +23,7 @@ customers AS (
     SELECT 
         customer_id,
         created_date
-    FROM dim_rental_customers
+    FROM {{ ref('db__dim_rental_customers') }}
 ),
 daily_activity AS (
     /* 
@@ -39,9 +39,9 @@ daily_activity AS (
         rentals.rental_id IS NOT NULL AS had_activity
     FROM customers
     CROSS JOIN dates
-    LEFT JOIN {{ ref('db__rental') }} rentals
+    LEFT JOIN {{ ref('db__int_rentals') }} rentals
         ON customers.customer_id = rentals.customer_id
-        AND dates.dimension_date = DATE(rentals.rental_date)
+        AND dates.dimension_date = rentals.rental_date
     WHERE dates.dimension_date >= customers.created_date
 ),
 monthly_activity AS (
@@ -78,7 +78,7 @@ SELECT
 FROM monthly_activity
 )
 SELECT
-    {{ generate_surrogate_key(['month_date', 'customer_id']) }} AS customer_activity_id,
+    {{ dbt_utils.generate_surrogate_key(['month_date', 'customer_id']) }} AS customer_activity_id,
     month_date,
     customer_id,
     CASE
