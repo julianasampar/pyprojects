@@ -1,7 +1,7 @@
-dw_sqlite:
-  target: dev
+dbt_project:
+  target: sqlite_dev
   outputs:
-    dev:
+    sqlite_dev:
       type: sqlite
       threads: 1
       database: 'database'

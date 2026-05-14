@@ -6,17 +6,17 @@
   version: '1.0.0'
 
   # This setting configures which "profile" dbt uses for this project.
-  profile: 'dw_sqlite'
+  profile: 'dbt_project'
 
   # These configurations specify where dbt should look for different types of files.
   # The `model-paths` config, for example, states that models in this project can be
   # found in the "models/" directory. You probably won't need to change these!
-  model-paths: ["dw_sqlite/models"]
-  analysis-paths: ["dw_sqlite/analyses"]
-  test-paths: ["dw_sqlite/tests"]
-  seed-paths: ["dw_sqlite/seeds"]
-  macro-paths: ["dw_sqlite/macros"]
-  snapshot-paths: ["dw_sqlite/snapshots"]
+  model-paths: ["dw_sqlite/models", "dw_duckdb/models"]
+  analysis-paths: ["dw_sqlite/analyses", "dw_duckdb/analyses"]
+  test-paths: ["dw_sqlite/tests", "dw_duckdb/tests"]
+  seed-paths: ["dw_sqlite/seeds", "dw_duckdb/seeds"]
+  macro-paths: ["macros"]
+  snapshot-paths: ["dw_sqlite/snapshots", "dw_duckdb/snapshots"]
 
   clean-targets:         # directories to be removed by `dbt clean`
     - "target"
@@ -29,3 +29,11 @@
   # In this example config, we tell dbt to build all models in the example/
   # directory as views. These settings can be overridden in the individual model
   # files using the `{{ config(...) }}` macro.
+
+  models:
+    dbt_project:
+      dw_sqlite:
+        +enabled: "{{ target.type == 'sqlite_dev' }}"
+
+      dw_duckdb:
+        +enabled: "{{ target.type == 'duckdb_dev' }}"
