@@ -19,12 +19,13 @@ airflow/logs/scheduler/latest
 .DS_Store
 dagster_university/data/staging/data.duckdb
 *.tmp_dagster_home_*
-.cache
-/target
+.cachedbt/
+dbt/target/*
 *.gitkeep
 others/archive/*
-dbt_packages/*
+dbt/dbt_packages/*
 *.db-journal
 package-lock.yml
 .vscode/settings.json
 .user.yml
+*.cache
