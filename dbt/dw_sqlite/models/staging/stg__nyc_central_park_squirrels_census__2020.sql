@@ -64,4 +64,4 @@ SELECT
     NULL as tall_flags,
     NULL as tall_twitches,
     CURRENT_TIMESTAMP as updated_at
-FROM nyc_central_park_squirrels_census__2020
+FROM 'nyc_environment__squirrel-data - squirrel-data'

@@ -40,4 +40,4 @@ SELECT
     latitude AS latitude,
     longitude AS longitude,
     CURRENT_TIMESTAMP AS updated_at
-FROM nyc_street_tree_census__2015
+FROM 'nyc_environment__2015_Street_Tree_Census_-_Tree_Data_20260514'

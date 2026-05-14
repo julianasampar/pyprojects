@@ -50,4 +50,4 @@ SELECT
     NULL as interactions_with_humans,
     NULL as activities,
     CURRENT_TIMESTAMP AS updated_at
-FROM nyc_central_park_squirrels_census__2018
+FROM 'nyc_environment__2018_Central_Park_Squirrel_Census_-_Squirrel_Data_20250825'

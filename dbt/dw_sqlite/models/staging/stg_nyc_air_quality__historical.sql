@@ -17,4 +17,4 @@ SELECT
     "Data Value" AS value,
     "Message" AS message,
     CURRENT_TIMESTAMP AS updated_at
-FROM nyc_air_quality__historical
+FROM nyc_environment__Air_Quality_20250825
