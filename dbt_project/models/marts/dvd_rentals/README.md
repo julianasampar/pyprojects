@@ -110,6 +110,22 @@ The criterias below are listed in order from must have to nice to have.
 #### What solution looks like:
 <img width="2156" height="1156" alt="image" src="https://github.com/user-attachments/assets/07e70dfa-57ac-40ba-93a2-cbffc642a11f" />
 
+
+## Question 4: Data Quality
+#### Implement some basic tests for the dbt models
+
+Level of Difficulty: Low
+
+#### Tips:
+- Think about which checks you should be implementing to guarantee that the models are running properly.
+
+#### Criterias for the Solution: 
+- Engineer creates yml files for each model developed or one single yml file containing every mart developed
+- Engineer creates column-level descriptions across all developed marts 
+- Engineer creates hashes and/or ids across developed marts and implemented uniqueness checks for the corresponding columns in the yml files  
+- When appropriate, engineer creates not_null checks.
+
+
 ## Other Tips & Instructions
 
 - Look at the filmes under dvd_rentals/ folder to use the developed code as reference to guide evaluations.
