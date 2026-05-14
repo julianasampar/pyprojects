@@ -12,11 +12,12 @@
         while the return_date indicates when it is added back.
     To accurately calculate the number of films available at any given point in time, we need a 
         reference from it's prior state. For this reason, we apply a rolling sum over these movements.
+    Observe that there are movies which where rented and returned in the same day.
 */
 
 WITH min_date AS (
     SELECT 
-        DATE(MIN(rental_date), '-1 day') AS day0_date
+        DATE(MIN(rental_timestamp), '-1 day') AS day0_date
     FROM {{ ref('int_rentals') }}
 )
 , day0_log AS (
@@ -34,41 +35,50 @@ WITH min_date AS (
 ),
 inventory_decrease AS (
     SELECT 
-        DATE(rental_date) AS inventory_date,
+        rental_timestamp AS inventory_date,
         film_id,
         store_id,
         COUNT(DISTINCT rental_id)*-1 AS storage_movement
     FROM {{ ref('int_rentals') }}
-    GROUP BY rental_date,
+    GROUP BY rental_timestamp,
             film_id,
             store_id
 ),
 inventory_increase AS (
     SELECT 
-        DATE(return_date) AS inventory_date,
+        return_timestamp AS inventory_date,
         film_id,
         store_id,
         COUNT(DISTINCT rental_id) AS storage_movement
     FROM {{ ref('int_rentals') }}
     WHERE return_date IS NOT NULL
-    GROUP BY rental_date,
+    GROUP BY return_timestamp,
             film_id,
             store_id
 ),
 union_all AS (
-    SELECT * FROM day0_log
+    SELECT 
+        HEX((HEX(inventory_date) || HEX(film_id) || HEX(store_id) || 0)) AS inventory_movement_id,
+        *
+    FROM day0_log
     UNION ALL
-    SELECT * FROM inventory_decrease
+    SELECT
+        HEX((HEX(inventory_date) || HEX(film_id) || HEX(store_id) || -1)) AS inventory_movement_id,
+        * 
+    FROM inventory_decrease
     UNION ALL
-    SELECT * FROM inventory_increase
+    SELECT
+        HEX((HEX(inventory_date) || HEX(film_id) || HEX(store_id) || 1)) AS inventory_movement_id,
+        *  
+    FROM inventory_increase
 )
 
 SELECT
-    HEX((HEX(inventory_date) || HEX(film_id) || HEX(store_id))) AS inventory_movement_id,
-    inventory_date,
+    inventory_movement_id,
+    DATE(inventory_date) AS inventory_date,
     film_id,
     store_id,
     SUM(storage_volume) OVER (
-        PARTITION BY film_id, store_id ORDER BY inventory_date
+        PARTITION BY film_id, store_id ORDER BY inventory_date 
         ) AS storage_volume
 FROM union_all
