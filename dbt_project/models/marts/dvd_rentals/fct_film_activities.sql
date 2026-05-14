@@ -5,7 +5,8 @@
 
 {{ activity_generator(dimension='film', dimension_date='purchase_date', source='dim_films') }}
 
-SELECT 
+SELECT
+    HEX((HEX(month_date) || HEX(film_id))) AS film_activity_id,
     month_date,
     film_id,
     CASE

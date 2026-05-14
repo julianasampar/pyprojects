@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: fct_film_inventory
+    description: |
+      Time-based inventory fact table tracking film stock levels at each store.
+      Records inventory movements for all films including initial stock snapshot
+      and daily rental/return impacts on inventory volume.
+    columns:
+      - name: inventory_movement_id
+        description: Unique identifier for each inventory movement record
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: inventory_date
+        description: Date of the inventory snapshot or movement
+        tests:
+          - not_null:
+              severity: warn
+      - name: film_id
+        description: Reference to the film in inventory
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_films')
+              field: film_id
+              severity: warn
+      - name: store_id
+        description: Reference to the store location
+        tests:
+          - not_null:
+              severity: warn
+      - name: storage_volume
+        description: |
+          Cumulative number of films in stock at the given store on the given date.
+          Calculated as a rolling sum of inventory movements (initial stock +/- rentals/returns)

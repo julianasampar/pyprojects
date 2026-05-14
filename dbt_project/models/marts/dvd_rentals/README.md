@@ -29,6 +29,7 @@ The criterias below are listed in order from must have to nice to have.
 - Engineer identifies that profit should be pulled from the column 'amount' from payments table.
 - Engineer displays on the final table the revenue date, revenue amount, cost amount and profit amount.
 - Engineer identifies that there are rentals without associated payments. Therefore, engineer pulls that from rentals and do a left join to payments.
+- Engineer identifies that there is one rental associated to five different payments of different customers. Engineer treats it accordingly removing the records from unmatched customers.
 - Engineer identifies that the minimum payment of a rental is the rental_rate, available in the film table.
 - Engineer treats the payment amount for rentals made AND returned, but without a corresponding payment, by calculating an expected amount.
 - Engineer calculates the expected amount by getting the length of the rental (days_booked = date_diff('day', rental_date, return_date)), dividing it by the rental_duration and multiplying the result for the rental_rate. Both 'rental_duration' and 'rental_rate' must be pulled from film table, which must be joined through inventory table.
@@ -95,6 +96,7 @@ Level of Difficulty: Low
 - The logic will require a time-based view built on top of an initial static snapshot of the system.
 - Think about what represents a film leaving inventory and being added back.
 - Consider that, to be able to calculate the storage amount at a given moment, you need to take into account the moment before.
+- Be mindful that there are films rented and returned the same day. The solution should account both movements.
 
 #### Criterias for the Solution: 
 The criterias below are listed in order from must have to nice to have.
@@ -107,6 +109,22 @@ The criterias below are listed in order from must have to nice to have.
 
 #### What solution looks like:
 <img width="2156" height="1156" alt="image" src="https://github.com/user-attachments/assets/07e70dfa-57ac-40ba-93a2-cbffc642a11f" />
+
+
+## Question 4: Data Quality
+#### Implement some basic tests for the dbt models
+
+Level of Difficulty: Low
+
+#### Tips:
+- Think about which checks you should be implementing to guarantee that the models are running properly.
+
+#### Criterias for the Solution: 
+- Engineer creates yml files for each model developed or one single yml file containing every mart developed
+- Engineer creates column-level descriptions across all developed marts 
+- Engineer creates hashes and/or ids across developed marts and implemented uniqueness checks for the corresponding columns in the yml files  
+- When appropriate, engineer creates not_null checks.
+
 
 ## Other Tips & Instructions
 

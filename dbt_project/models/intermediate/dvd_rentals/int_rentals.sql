@@ -9,11 +9,13 @@
 
 SELECT 
     rentals.rental_id,
+    rentals.rental_date AS rental_timestamp,
     DATE(rentals.rental_date) AS rental_date,
     rentals.inventory_id,
     inventory.store_id,
     films.film_id,
     rentals.customer_id,
+    rentals.return_date AS return_timestamp,
     DATE(rentals.return_date) AS return_date,
     rentals.staff_id
 FROM dvd_rental_store__rental rentals

@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: dim_films
+    description: |
+      Dimension table containing film attributes and pricing information.
+      Includes purchase date derived from first rental activity to handle missing data quality issues.
+    columns:
+      - name: film_id
+        description: Unique identifier for each film
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: title
+        description: Title/name of the film
+        tests:
+          - not_null:
+              severity: warn
+      - name: rental_duration
+        description: Standard rental duration for this film in days
+        tests:
+          - not_null:
+              severity: warn
+      - name: rental_rate
+        description: Standard rental rate (minimum fee) for this film
+        tests:
+          - not_null:
+              severity: warn
+      - name: replacement_cost
+        description: Cost to replace this film in inventory
+        tests:
+          - not_null:
+              severity: warn
+      - name: purchase_date
+        description: Date when the film was first added to inventory (derived from first rental date)
