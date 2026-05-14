@@ -77,7 +77,8 @@ SELECT
         0) AS rental_quantity_3m
 FROM monthly_activity
 )
-SELECT 
+SELECT
+    HEX((HEX(month_date) || HEX(customer_id))) AS customer_activity_id,
     month_date,
     customer_id,
     CASE

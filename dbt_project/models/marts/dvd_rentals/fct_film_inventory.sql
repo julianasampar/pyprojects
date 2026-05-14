@@ -63,7 +63,8 @@ union_all AS (
     SELECT * FROM inventory_increase
 )
 
-SELECT 
+SELECT
+    HEX((HEX(inventory_date) || HEX(film_id) || HEX(store_id))) AS inventory_movement_id,
     inventory_date,
     film_id,
     store_id,
