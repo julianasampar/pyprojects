@@ -15,6 +15,10 @@
     That way, we have the expected price of the rental.
     Looking at the data, we see that the rental rate is the minimum fee, so we should treat the data 
         to consider that in the expected revenue as well. 
+
+    Also, there is 1 rental_id with 5 different payment records. The payment records have different 
+        customer_ids. For that reason, the join between rental and payments is done at rental_id and
+        customer_id.
 */
 
 WITH revenue AS (
@@ -36,7 +40,7 @@ WITH revenue AS (
         END AS expected_revenue,
         payment.amount AS payment_amount
     FROM dvd_rental_store__rental rental
-    LEFT JOIN dvd_rental_store__payment payment USING (rental_id)
+    LEFT JOIN dvd_rental_store__payment payment USING (rental_id, customer_id)
     LEFT JOIN dvd_rental_store__inventory inventory USING (inventory_id)
     LEFT JOIN dvd_rental_store__film film USING (film_id)
 ),
