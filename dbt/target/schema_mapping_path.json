@@ -1,0 +1,502 @@
+{
+    "database": {
+        "main": {
+            "dim_date": {
+                "date_key": "int",
+                "dimension_date": "unknown",
+                "year": "int",
+                "quarter": "int",
+                "month": "int",
+                "day": "int",
+                "day_in_week": "int",
+                "weekday_name": "unknown",
+                "month_name": "unknown",
+                "month_abbreviation": "unknown",
+                "day_in_year": "int",
+                "week_in_year": "unknown",
+                "is_working_day": "unknown"
+            },
+            "stg__nyc_central_park_squirrels_census__2018": {
+                "unique_squirrel_id": "text",
+                "longitude": "real",
+                "latitude": "real",
+                "hectare": "text",
+                "shift": "unknown",
+                "observation_date": "int",
+                "hectare_squirrel_number": "int",
+                "squirrel_age": "unknown",
+                "primary_fur_color": "unknown",
+                "highlight_fur_color": "unknown",
+                "combination_of_primary_and_highlight_color": "unknown",
+                "color_notes": "unknown",
+                "location": "unknown",
+                "above_ground_sighter_measurement": "text",
+                "specific_location": "unknown",
+                "was_running": "int",
+                "was_chasing": "int",
+                "was_climbing": "int",
+                "was_eating": "int",
+                "was_foraging": "int",
+                "other_activities": "text",
+                "kuks": "int",
+                "quaas": "int",
+                "moans": "int",
+                "tall_flags": "unknown",
+                "tall_twitches": "unknown",
+                "was_approaching": "int",
+                "was_indifferent": "int",
+                "was_running_from": "int",
+                "other_interactions": "unknown",
+                "neighbourhood": "unknown",
+                "area_id": "unknown",
+                "park_name": "unknown",
+                "park_id": "unknown",
+                "was_watching": "unknown",
+                "was_sitting": "unknown",
+                "was_sleeping": "unknown",
+                "was_vocalizing": "unknown",
+                "was_grooming": "unknown",
+                "was_digging": "unknown",
+                "was_nesting": "unknown",
+                "interactions_with_humans": "unknown",
+                "activities": "unknown",
+                "updated_at": "unknown"
+            },
+            "stg__nyc_central_park_squirrels_census__2020": {
+                "unique_squirrel_id": "text",
+                "observation_date": "int",
+                "latitude": "real",
+                "longitude": "real",
+                "neighbourhood": "unknown",
+                "area_id": "text",
+                "park_name": "unknown",
+                "park_id": "int",
+                "primary_fur_color": "unknown",
+                "highlight_fur_color": "unknown",
+                "color_notes": "unknown",
+                "location": "unknown",
+                "above_ground_sighter_measurement": "text",
+                "specific_location": "unknown",
+                "was_approaching": "unknown",
+                "was_indifferent": "unknown",
+                "was_running_from": "unknown",
+                "was_watching": "unknown",
+                "was_running": "unknown",
+                "was_chasing": "unknown",
+                "was_climbing": "unknown",
+                "was_eating": "unknown",
+                "was_foraging": "unknown",
+                "was_sitting": "unknown",
+                "was_sleeping": "unknown",
+                "was_vocalizing": "unknown",
+                "was_grooming": "unknown",
+                "was_digging": "unknown",
+                "was_nesting": "unknown",
+                "activities": "unknown",
+                "interactions_with_humans": "unknown",
+                "other_interactions": "unknown",
+                "hectare": "unknown",
+                "shift": "unknown",
+                "hectare_squirrel_number": "unknown",
+                "squirrel_age": "unknown",
+                "combination_of_primary_and_highlight_color": "unknown",
+                "other_activities": "unknown",
+                "kuks": "unknown",
+                "quaas": "unknown",
+                "moans": "unknown",
+                "tall_flags": "unknown",
+                "tall_twitches": "unknown",
+                "updated_at": "unknown"
+            },
+            "stg__nyc_street_tree_census__2015": {
+                "tree_id": "int",
+                "block_id": "int",
+                "observation_date": "int",
+                "tree_diameter": "int",
+                "stump_diameter": "int",
+                "tree_curb_location": "unknown",
+                "tree_status": "unknown",
+                "tree_health": "unknown",
+                "species_latin_name": "unknown",
+                "species_common_name": "unknown",
+                "stewards_observed": "unknown",
+                "presence_of_guards": "unknown",
+                "sidewalk_damaged": "unknown",
+                "damaged_roots_by_paving_stones": "unknown",
+                "damaged_roots_by_metal_grates": "unknown",
+                "damaged_roots_by_other": "unknown",
+                "damaged_trunk_by_rope_or_wires": "unknown",
+                "damaged_trunk_by_lights": "unknown",
+                "damaged_trunk_by_other": "unknown",
+                "damaged_branch_by_lights_or_wire": "unknown",
+                "damaged_branch_by_shoes": "unknown",
+                "damaged_branch_by_other": "unknown",
+                "address": "unknown",
+                "postcode": "int",
+                "city": "unknown",
+                "borough": "unknown",
+                "neighbourhood": "unknown",
+                "state": "unknown",
+                "latitude": "real",
+                "longitude": "real",
+                "updated_at": "unknown"
+            },
+            "stg_nyc_air_quality__historical": {
+                "unique_id": "int",
+                "indicator_id": "int",
+                "indicator_name": "unknown",
+                "measure": "unknown",
+                "measure_info": "unknown",
+                "geo_type_name": "unknown",
+                "geo_join_id": "int",
+                "geo_place_name": "unknown",
+                "time_period": "unknown",
+                "start_date": "int",
+                "value": "real",
+                "message": "real",
+                "updated_at": "unknown"
+            },
+            "int_central_park_squirrels": {
+                "unique_squirrel_id": "text",
+                "observation_date": "int",
+                "latitude": "unknown",
+                "longitude": "unknown",
+                "highlight_fur_color": "unknown",
+                "location": "unknown",
+                "was_running": "int",
+                "was_chasing": "int",
+                "was_climbing": "int",
+                "was_eating": "int",
+                "was_foraging": "int",
+                "was_approaching": "int",
+                "was_indifferent": "int",
+                "was_running_from": "int",
+                "was_watching": "unknown",
+                "was_sitting": "unknown",
+                "was_sleeping": "unknown",
+                "was_vocalizing": "unknown",
+                "was_grooming": "unknown",
+                "was_digging": "unknown",
+                "was_nesting": "unknown",
+                "other_activities": "text",
+                "updated_at": "unknown"
+            },
+            "dim_tree_species": {
+                "tree_species_key": "unknown",
+                "species_common_name": "unknown",
+                "species_latin_name": "unknown",
+                "tree_family": "unknown",
+                "tree_type": "unknown"
+            },
+            "int_manhattan_trees": {
+                "tree_id": "int",
+                "observation_date": "int",
+                "latitude": "unknown",
+                "longitude": "unknown",
+                "city": "unknown",
+                "borough": "unknown",
+                "neighbourhood": "unknown",
+                "tree_diameter": "int",
+                "stump_diameter": "int",
+                "tree_status": "unknown",
+                "is_tree_alive": "unknown",
+                "tree_on_curb": "unknown",
+                "species_common_name": "unknown",
+                "species_latin_name": "unknown",
+                "sidewalk_damaged": "unknown",
+                "damaged_roots": "unknown",
+                "damaged_trunk": "unknown",
+                "damaged_branches": "unknown",
+                "updated_at": "unknown"
+            },
+            "int_air_quality": {
+                "measurement_key": "int",
+                "start_date": "int",
+                "end_date": "unknown",
+                "indicator_key": "int",
+                "indicator_name": "unknown",
+                "measure": "unknown",
+                "measure_info": "unknown",
+                "neighbourhood": "unknown",
+                "season": "unknown",
+                "indicator_value": "unknown"
+            },
+            "dim_air_quality_indicators": {
+                "indicator_key": "int",
+                "indicator_name": "unknown",
+                "measure": "unknown"
+            },
+            "dim_nyc_neighbourhoods": {
+                "neighbourhood_key": "unknown",
+                "neighbourhood": "unknown"
+            },
+            "fct_nyc_air_quality": {
+                "measurement_key": "int",
+                "indicator_key": "int",
+                "neighbourhood_key": "unknown",
+                "start_date": "int",
+                "end_date": "unknown",
+                "season": "unknown",
+                "indicator_value": "unknown"
+            },
+            "fct_nyc_squirrels_by_trees": {
+                "observation_date": "int",
+                "tree_id": "int",
+                "neighbourhood_key": "unknown",
+                "qty_squirrels_observed": "unknown",
+                "tree_diameter": "int",
+                "is_tree_alive": "unknown",
+                "tree_on_curb": "unknown",
+                "tree_species_key": "unknown",
+                "sidewalk_damaged": "unknown",
+                "damaged_roots": "unknown",
+                "damaged_trunk": "unknown",
+                "damaged_branches": "unknown",
+                "squirrels_running": "unknown",
+                "squirrels_chasing": "unknown",
+                "squirrels_climbing": "unknown",
+                "squirrels_eating": "unknown",
+                "squirrels_foraging": "unknown",
+                "squirrels_approaching": "unknown",
+                "squirrels_indifferent": "unknown",
+                "squirrels_running_from": "unknown",
+                "squirrels_vocalizing": "unknown",
+                "squirrels_in_other_activities": "unknown",
+                "updated_at": "unknown"
+            }
+        },
+        "main_dbt_test__audit": {
+            "unique_fct_nyc_air_quality_measurement_key": {
+                "unique_field": null,
+                "n_records": null
+            },
+            "not_null_fct_nyc_air_quality_measurement_key": {
+                "measurement_key": null
+            },
+            "not_null_fct_nyc_air_quality_indicator_key": {
+                "indicator_key": null
+            },
+            "relationships_fct_nyc_air_quality_indicator_key__indicator_key__ref_dim_air_quality_indicators_": {
+                "from_field": null
+            },
+            "relationships_fct_nyc_air_quality_neighbourhood_key__neighbourhood_key__ref_dim_nyc_neighbourhoods_": {
+                "from_field": null
+            },
+            "not_null_fct_nyc_air_quality_start_date": {
+                "start_date": null
+            },
+            "accepted_values_fct_nyc_air_quality_season__winter__spring__summer__fall__annual": {
+                "value_field": null,
+                "n_records": null
+            },
+            "not_null_fct_nyc_air_quality_indicator_value": {
+                "indicator_value": null
+            },
+            "not_null_fct_nyc_squirrels_by_trees_observation_date": {
+                "observation_date": null
+            },
+            "not_null_fct_nyc_squirrels_by_trees_tree_id": {
+                "tree_id": null
+            },
+            "relationships_fct_nyc_squirrels_by_trees_neighbourhood_key__neighbourhood_key__ref_dim_nyc_neighbourhoods_": {
+                "from_field": null
+            },
+            "not_null_fct_nyc_squirrels_by_trees_qty_squirrels_observed": {
+                "qty_squirrels_observed": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_qty_squirrels_observed__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_tree_diameter__0": {
+                "*": null
+            },
+            "relationships_fct_nyc_squirrels_by_trees_tree_species_key__tree_species_key__ref_dim_tree_species_": {
+                "from_field": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_running__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_chasing__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_climbing__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_eating__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_foraging__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_approaching__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_indifferent__0": {
+                "*": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_running_from__0": {
+                "*": null
+            },
+            "not_null_fct_nyc_squirrels_by_trees_squirrels_vocalizing": {
+                "squirrels_vocalizing": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_vocalizing__0": {
+                "*": null
+            },
+            "not_null_fct_nyc_squirrels_by_trees_squirrels_in_other_activities": {
+                "squirrels_in_other_activities": null
+            },
+            "dbt_utils_accepted_range_fct_nyc_squirrels_by_trees_squirrels_in_other_activities__0": {
+                "*": null
+            },
+            "not_null_fct_nyc_squirrels_by_trees_updated_at": {
+                "updated_at": null
+            },
+            "unique_dim_air_quality_indicators_indicator_key": {
+                "unique_field": null,
+                "n_records": null
+            },
+            "not_null_dim_air_quality_indicators_indicator_key": {
+                "indicator_key": null
+            },
+            "not_null_dim_air_quality_indicators_indicator_name": {
+                "indicator_name": null
+            },
+            "dbt_utils_not_empty_string_dim_air_quality_indicators_indicator_name": {
+                "indicator_name": null
+            },
+            "not_null_dim_air_quality_indicators_measure": {
+                "measure": null
+            },
+            "dbt_utils_not_empty_string_dim_air_quality_indicators_measure": {
+                "measure": null
+            },
+            "unique_dim_nyc_neighbourhoods_neighbourhood_key": {
+                "unique_field": null,
+                "n_records": null
+            },
+            "not_null_dim_nyc_neighbourhoods_neighbourhood_key": {
+                "neighbourhood_key": null
+            },
+            "not_null_dim_nyc_neighbourhoods_neighbourhood": {
+                "neighbourhood": null
+            },
+            "dbt_utils_not_empty_string_dim_nyc_neighbourhoods_neighbourhood": {
+                "neighbourhood": null
+            },
+            "unique_dim_nyc_neighbourhoods_neighbourhood": {
+                "unique_field": null,
+                "n_records": null
+            },
+            "unique_dim_tree_species_tree_species_key": {
+                "unique_field": null,
+                "n_records": null
+            },
+            "not_null_dim_tree_species_tree_species_key": {
+                "tree_species_key": null
+            },
+            "dbt_utils_not_empty_string_dim_tree_species_species_common_name": {
+                "species_common_name": null
+            },
+            "dbt_utils_not_empty_string_dim_tree_species_species_latin_name": {
+                "species_latin_name": null
+            },
+            "not_null_dim_tree_species_tree_family": {
+                "tree_family": null
+            },
+            "accepted_values_dim_tree_species_tree_family__oak_family__maple_family__pine_family__cherry_family__linden_family__birch_family__ash_family__elm_family__other": {
+                "value_field": null,
+                "n_records": null
+            },
+            "not_null_dim_tree_species_tree_type": {
+                "tree_type": null
+            },
+            "accepted_values_dim_tree_species_tree_type__coniferous__deciduous": {
+                "value_field": null,
+                "n_records": null
+            },
+            "unique_dim_date_date_key": {
+                "unique_field": null,
+                "n_records": null
+            },
+            "not_null_dim_date_date_key": {
+                "date_key": null
+            },
+            "unique_dim_date_dimension_date": {
+                "unique_field": null,
+                "n_records": null
+            },
+            "not_null_dim_date_dimension_date": {
+                "dimension_date": null
+            },
+            "not_null_dim_date_year": {
+                "year": null
+            },
+            "not_null_dim_date_quarter": {
+                "quarter": null
+            },
+            "accepted_values_dim_date_quarter__false__1__2__3__4": {
+                "value_field": null,
+                "n_records": null
+            },
+            "not_null_dim_date_month": {
+                "month": null
+            },
+            "dbt_utils_accepted_range_dim_date_month__12__1": {
+                "*": null
+            },
+            "not_null_dim_date_day": {
+                "day": null
+            },
+            "dbt_utils_accepted_range_dim_date_day__31__1": {
+                "*": null
+            },
+            "not_null_dim_date_day_in_week": {
+                "day_in_week": null
+            },
+            "dbt_utils_accepted_range_dim_date_day_in_week__6__0": {
+                "*": null
+            },
+            "not_null_dim_date_weekday_name": {
+                "weekday_name": null
+            },
+            "accepted_values_dim_date_weekday_name__monday__tuesday__wednesday__thursday__friday__saturday__sunday": {
+                "value_field": null,
+                "n_records": null
+            },
+            "not_null_dim_date_month_name": {
+                "month_name": null
+            },
+            "accepted_values_dim_date_month_name__january__february__march__april__may__june__july__august__september__october__november__december": {
+                "value_field": null,
+                "n_records": null
+            },
+            "not_null_dim_date_month_abbreviation": {
+                "month_abbreviation": null
+            },
+            "accepted_values_dim_date_month_abbreviation__jan__feb__mar__apr__may__jun__jul__aug__sep__oct__nov__dec": {
+                "value_field": null,
+                "n_records": null
+            },
+            "not_null_dim_date_day_in_year": {
+                "day_in_year": null
+            },
+            "dbt_utils_accepted_range_dim_date_day_in_year__366__1": {
+                "*": null
+            },
+            "not_null_dim_date_week_in_year": {
+                "week_in_year": null
+            },
+            "dbt_utils_accepted_range_dim_date_week_in_year__54__1": {
+                "*": null
+            },
+            "not_null_dim_date_is_working_day": {
+                "is_working_day": null
+            },
+            "accepted_values_dim_date_is_working_day__false__0__1": {
+                "value_field": null,
+                "n_records": null
+            }
+        }
+    }
+}
