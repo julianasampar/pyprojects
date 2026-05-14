@@ -27,3 +27,4 @@ dbt_packages/*
 *.db-journal
 package-lock.yml
 .vscode/settings.json
+.user.yml
