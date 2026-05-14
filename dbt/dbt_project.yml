@@ -15,7 +15,7 @@
   analysis-paths: ["dw_sqlite/analyses", "dw_duckdb/analyses"]
   test-paths: ["dw_sqlite/tests", "dw_duckdb/tests"]
   seed-paths: ["dw_sqlite/seeds", "dw_duckdb/seeds"]
-  macro-paths: ["macros"]
+  macro-paths: ["dbt_macros"]
   snapshot-paths: ["dw_sqlite/snapshots", "dw_duckdb/snapshots"]
 
   clean-targets:         # directories to be removed by `dbt clean`
