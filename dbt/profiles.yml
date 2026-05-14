@@ -1,5 +1,6 @@
 dbt_project:
   target: sqlite_dev
+
   outputs:
     sqlite_dev:
       type: sqlite
@@ -9,3 +10,8 @@ dbt_project:
       schemas_and_paths:
         main: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/dbt/dbt_database.db
       schema_directory: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/dbt
+
+    duckdb_dev:
+        type: duckdb
+        path: ./dbt_database.duckdb
+        threads: 4
