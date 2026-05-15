@@ -9,7 +9,7 @@
 WITH RECURSIVE dates(dimension_date) AS (
     VALUES((SELECT MIN(rental_date) FROM {{ int_rentals }}))
     UNION ALL
-    SELECT CAST(strftime('%Y-%m-%d', dimension_date, '+1 day') AS DATE)
+    SELECT CAST(strftime('%Y-%m-%d', CAST(dimension_date AS DATE), '+1 day') AS DATE)
     FROM dates
     WHERE dimension_date < (SELECT MAX(rental_date) FROM {{ int_rentals }})
 ),

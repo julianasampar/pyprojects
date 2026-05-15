@@ -24,7 +24,7 @@ models:
           - not_null:
               severity: warn
           - relationships:
-              to: ref('dim_rental_customers')
+              to: ref('db__dim_rental_customers')
               field: customer_id
               severity: warn
       - name: film_id
@@ -33,7 +33,7 @@ models:
           - not_null:
               severity: warn
           - relationships:
-              to: ref('dim_films')
+              to: ref('db__dim_films')
               field: film_id
               severity: warn
       - name: store_id

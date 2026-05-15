@@ -4,6 +4,8 @@
     tags=['dvd_rentals']
 )}}
 
+-- depends_on: {{ ref('int_rentals') }}
+
 {{ activity_generator(dimension='film', dimension_date='purchase_date', source='dim_films') }}
 
 SELECT
