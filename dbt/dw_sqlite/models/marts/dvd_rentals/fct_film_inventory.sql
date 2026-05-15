@@ -28,7 +28,7 @@ WITH min_date AS (
         film_id,
         store_id,
         COUNT(*) AS storage_volume
-    FROM dvd_rental_store__inventory
+    FROM {{ source('main', 'dvd_rental_store__inventory') }}
     CROSS JOIN min_date
     GROUP BY 
         film_id,

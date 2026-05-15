@@ -14,7 +14,7 @@ SELECT
     customers.last_name,
     customers.email,
     MIN(rentals.rental_date) AS created_date
-FROM read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/customer.csv') customers
+FROM  {{ source('main', 'dvd_rental_store__customer') }} customers
 LEFT JOIN {{ ref('db__int_rentals') }} rentals USING (customer_id)
 GROUP BY 
     customers.customer_id,

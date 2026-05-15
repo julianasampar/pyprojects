@@ -39,19 +39,19 @@ WITH revenue AS (
             ELSE ROUND(( {{ days_booked }} / film.rental_duration ), 2) * film.rental_rate
         END AS expected_revenue,
         payment.amount AS payment_amount
-    FROM dvd_rental_store__rental rental
-    LEFT JOIN dvd_rental_store__payment payment USING (rental_id, customer_id)
-    LEFT JOIN dvd_rental_store__inventory inventory USING (inventory_id)
-    LEFT JOIN dvd_rental_store__film film USING (film_id)
+    FROM {{ source('main', 'dvd_rental_store__rental') }} rental
+    LEFT JOIN {{ source('main', 'dvd_rental_store__payment') }} payment USING (rental_id, customer_id)
+    LEFT JOIN {{ source('main', 'dvd_rental_store__inventory') }} inventory USING (inventory_id)
+    LEFT JOIN {{ source('main', 'dvd_rental_store__film') }} film USING (film_id)
 ),
 cost AS (
     -- For the cost, we must get the replacement cost of rentals NOT RETURNED.
     SELECT 
         rental.rental_id,
         film.replacement_cost AS cost_amount -- Replacement cost should not be NULL
-    FROM dvd_rental_store__rental rental
-    LEFT JOIN dvd_rental_store__inventory inventory USING (inventory_id)
-    LEFT JOIN dvd_rental_store__film film USING (film_id)
+    FROM {{ source('main', 'dvd_rental_store__rental') }} rental
+    LEFT JOIN {{ source('main', 'dvd_rental_store__inventory') }} inventory USING (inventory_id)
+    LEFT JOIN {{ source('main', 'dvd_rental_store__film') }} film USING (film_id)
     WHERE rental.return_date IS NULL
 )
 SELECT 

@@ -18,6 +18,6 @@ SELECT
     rentals.return_date AS return_timestamp,
     CAST(rentals.return_date AS DATE) AS return_date,
     rentals.staff_id
-FROM read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/rental.csv') rentals
-LEFT JOIN read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/inventory.csv') inventory USING (inventory_id)
-LEFT JOIN read_csv_auto('/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store/film.csv') films USING (film_id)
+FROM {{ source('main', 'dvd_rental_store__rental') }} rentals
+LEFT JOIN {{ source('main', 'dvd_rental_store__inventory') }} inventory USING (inventory_id)
+LEFT JOIN {{ source('main', 'dvd_rental_store__film') }} films USING (film_id)

@@ -8,11 +8,11 @@
         being the date for the first rental, and end date as the last
     */
 WITH RECURSIVE dates(dimension_date) AS (
-    VALUES((SELECT MIN(DATE(rental_date)) FROM dvd_rental_store__rental))
+    VALUES((SELECT MIN(DATE(rental_date)) FROM {{ source('main', 'dvd_rental_store__rental') }}))
     UNION ALL
     SELECT date(dimension_date, '+1 day')
     FROM dates
-    WHERE dimension_date < (SELECT MAX(DATE(rental_date)) FROM dvd_rental_store__rental)
+    WHERE dimension_date < (SELECT MAX(DATE(rental_date)) FROM {{ source('main', 'dvd_rental_store__rental') }})
 ),
     /* 
     Getting all customers and their created date. 
@@ -23,7 +23,7 @@ customers AS (
     SELECT 
         customer_id,
         created_date
-    FROM dim_rental_customers
+    FROM {{ ref('dim_rental_customers') }}
 ),
 daily_activity AS (
     /* 
@@ -39,7 +39,7 @@ daily_activity AS (
         rentals.rental_id IS NOT NULL AS had_activity
     FROM customers
     CROSS JOIN dates
-    LEFT JOIN dvd_rental_store__rental rentals
+    LEFT JOIN {{ source('main', 'dvd_rental_store__rental') }} rentals
         ON customers.customer_id = rentals.customer_id
         AND dates.dimension_date = DATE(rentals.rental_date)
     WHERE dates.dimension_date >= customers.created_date

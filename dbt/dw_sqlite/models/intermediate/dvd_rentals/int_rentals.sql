@@ -18,6 +18,6 @@ SELECT
     rentals.return_date AS return_timestamp,
     DATE(rentals.return_date) AS return_date,
     rentals.staff_id
-FROM dvd_rental_store__rental rentals
-LEFT JOIN dvd_rental_store__inventory inventory USING (inventory_id)
-LEFT JOIN dvd_rental_store__film films USING (film_id)
+FROM {{ source('main', 'dvd_rental_store__rental') }} rentals
+LEFT JOIN {{ source('main', 'dvd_rental_store__inventory') }} inventory USING (inventory_id)
+LEFT JOIN {{ source('main', 'dvd_rental_store__film') }} films USING (film_id)

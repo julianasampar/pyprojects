@@ -14,7 +14,7 @@ SELECT
     customers.last_name,
     customers.email,
     MIN(rentals.rental_date) AS created_date
-FROM dvd_rental_store__customer customers
+FROM {{ source('main', 'dvd_rental_store__customer') }} customers
 LEFT JOIN {{ ref('int_rentals') }} rentals USING (customer_id)
 GROUP BY 
     customers.customer_id,
