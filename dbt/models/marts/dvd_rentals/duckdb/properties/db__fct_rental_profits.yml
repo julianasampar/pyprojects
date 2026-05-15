@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: db__fct_rental_profits
+    description: |
+      Fact table containing rental profit metrics by day. Shows net profit calculation
+      (revenue - cost) for each rental transaction, including expected revenue and discount rates.
+    columns:
+      - name: rental_id
+        description: Unique identifier for each rental transaction
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: revenue_date
+        description: Date when the rental revenue was recorded (payment date or rental date if no payment)
+        tests:
+          - not_null:
+              severity: warn
+      - name: customer_id
+        description: Reference to the customer who made the rental
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('db__dim_rental_customers')
+              field: customer_id
+              severity: warn
+      - name: film_id
+        description: Reference to the film that was rented
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('db__dim_films')
+              field: film_id
+              severity: warn
+      - name: store_id
+        description: Reference to the store where the rental occurred
+        tests:
+          - not_null:
+              severity: warn
+      - name: revenue_amount
+        description: Actual revenue amount from the rental, either from payment or calculated expected revenue
+      - name: expected_revenue
+        description: Expected revenue calculated based on rental duration and film rental rate
+      - name: discount_rate
+        description: Discount rate applied to the rental (calculated as 1 - actual revenue / expected revenue)
+      - name: cost_amount
+        description: Cost amount representing the replacement cost of unreturned films
+      - name: profit_amount
+        description: Net profit calculated as (revenue_amount - cost_amount)

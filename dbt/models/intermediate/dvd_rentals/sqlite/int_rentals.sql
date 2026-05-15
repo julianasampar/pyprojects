@@ -1,0 +1,24 @@
+-- This solution is written for SQLite querying
+{{config(
+    meta={'database': 'sqlite'},
+    tags=['dvd_rentals']
+)}}
+
+/* The only purpose of this model is to centralize common treatments 
+    and joins relevant for the analysis
+    */
+
+SELECT 
+    rentals.rental_id,
+    rentals.rental_date AS rental_timestamp,
+    DATE(rentals.rental_date) AS rental_date,
+    rentals.inventory_id,
+    inventory.store_id,
+    films.film_id,
+    rentals.customer_id,
+    rentals.return_date AS return_timestamp,
+    DATE(rentals.return_date) AS return_date,
+    rentals.staff_id
+FROM {{ source('main', 'dvd_rental_store__rental') }} rentals
+LEFT JOIN {{ source('main', 'dvd_rental_store__inventory') }} inventory USING (inventory_id)
+LEFT JOIN {{ source('main', 'dvd_rental_store__film') }} films USING (film_id)

@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: db__fct_customer_activities
+    description: |
+      Fact table that tracks customer rental activity and engagement status on a monthly basis.
+      Categorizes customers into loyalty segments (Loyal, Engaging, Sporadic) and churn segments
+      (Disengaging, At Risk, Churned) based on 3-month rolling window activity.
+    columns:
+      - name: customer_activity_id
+        description: Unique identifier for each customer-month activity record
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: month_date
+        description: The month for which this activity snapshot is calculated
+        tests:
+          - not_null:
+              severity: warn
+      - name: customer_id
+        description: Reference to the customer
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('db__dim_rental_customers')
+              field: customer_id
+              severity: warn
+      - name: customer_activity
+        description: |
+          Customer engagement classification:
+          - Loyal Customers: rented in last 3 months consecutively
+          - Engaging Customers: rented in last 2 months consecutively
+          - Sporadic Customers: rented in current month only
+          - Disengaging Customers: rented in month 2 but not in month 1
+          - At Risk Customers: rented in month 3 but not in months 1-2
+          - Churned Customers: no rentals in last 3 months
+      - name: rental_quantity_1m
+        description: Number of rentals in the current month
+      - name: rental_quantity_3m
+        description: Total number of rentals across the last 3 months

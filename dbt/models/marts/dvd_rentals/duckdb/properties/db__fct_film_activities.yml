@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: db__fct_film_activities
+    description: |
+      Fact table that tracks film rental activity and demand status on a monthly basis.
+      Categorizes films into demand segments (High-demand, Consistently booked, Occasionally booked, etc.)
+      based on 3-month rolling window rental activity.
+    columns:
+      - name: film_activity_id
+        description: Unique identifier for each film-month activity record
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: month_date
+        description: The month for which this activity snapshot is calculated
+        tests:
+          - not_null:
+              severity: warn
+      - name: film_id
+        description: Reference to the film
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('db__dim_films')
+              field: film_id
+              severity: warn
+      - name: film_activity
+        description: |
+          Film demand classification:
+          - High-demand Movies: rented in last 3 months consecutively
+          - Consistently booked Movies: rented in last 2 months consecutively
+          - Occasionally booked Movies: rented in current month only
+          - Low-demand Movies: rented in month 2 but not in month 1
+          - Underperforming Movies: rented in month 3 but not in months 1-2
+          - Stale Movies: no rentals in last 3 months
+      - name: rental_quantity_1m
+        description: Number of rentals for this film in the current month
+      - name: rental_quantity_3m
+        description: Total number of rentals for this film across the last 3 months
