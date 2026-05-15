@@ -28,6 +28,8 @@ others/archive/*
 dbt/dbt_packages/dbt_utils/integration_tests/profiles.yml
 dbt/target
 dbt/dbt_packages
+dbt_packages
+package-lock.yml
 run_csv.py
 dbt/logs
 /logs
