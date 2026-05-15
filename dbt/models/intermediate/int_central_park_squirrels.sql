@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    meta={'database': 'sqlite'},
+) }}
 
 {% set common_columns = '
    unique_squirrel_id,

@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    meta={'database': 'sqlite'},
+) }}
 
 with recursive calendar(date_day) as (
     select date('1970-01-01')

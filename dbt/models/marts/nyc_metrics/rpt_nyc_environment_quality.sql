@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    meta={'database': 'sqlite'},
+) }}
 
 WITH prep_trees AS (
     -- Get all trees observed in 2015 from intermediate layer

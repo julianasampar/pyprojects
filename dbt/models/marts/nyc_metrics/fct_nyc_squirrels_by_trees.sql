@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    meta={'database': 'sqlite'},
+) }}
 
 SELECT
    squirrels.observation_date,

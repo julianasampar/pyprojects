@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    meta={'database': 'sqlite'},
+) }}
 
 SELECT 
     "Unique Squirrel Id" AS unique_squirrel_id,

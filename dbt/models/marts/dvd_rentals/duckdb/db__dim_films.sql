@@ -1,5 +1,6 @@
 -- This solution is written for DuckDB querying
 {{config(
+    meta={'database': 'duckdb'},
     tags=['dvd_rentals']
 )}}
 

@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    meta={'database': 'sqlite'},
+) }}
 
 {% set interactions_with_humans = 'LOWER("Interactions with Humans")' %}
 {% set activities = 'LOWER("Activities")' %}
