@@ -6,10 +6,16 @@
     {% set int_rentals = ref('db__int_rentals') %}
 {% endif %}
 
+{% if model.config.meta.database == 'sqlite' %}
+    {% set date_range = "date(dimension_date, '+1 day')" %}
+{% elif model.config.meta.database == 'duckdb' %}
+    {% set date_range = "dimension_date + INTERVAL 1 DAY" %}
+{% endif %}
+
 WITH RECURSIVE dates(dimension_date) AS (
     VALUES((SELECT MIN(rental_date) FROM {{ int_rentals }}))
     UNION ALL
-    SELECT CAST(strftime('%Y-%m-%d', CAST(dimension_date AS DATE), '+1 day') AS DATE)
+    SELECT {{ date_range }}
     FROM dates
     WHERE dimension_date < (SELECT MAX(rental_date) FROM {{ int_rentals }})
 ),

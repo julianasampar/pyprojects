@@ -20,7 +20,7 @@
 
 WITH min_date AS (
     SELECT
-        DATE_SUB(MIN(rental_timestamp), INTERVAL 1 day) AS day0_date
+        MIN(rental_timestamp) - INTERVAL 1 DAY AS day0_date
     FROM {{ ref('db__int_rentals') }}
 )
 , day0_log AS (
@@ -61,17 +61,17 @@ inventory_increase AS (
 ),
 union_all AS (
     SELECT
-        {{ generate_surrogate_key(['inventory_date', 'film_id', 'store_id', 0]) }} AS inventory_movement_id,
+        {{ dbt_utils.generate_surrogate_key(['inventory_date', 'film_id', 'store_id', 0]) }} AS inventory_movement_id,
         *
     FROM day0_log
     UNION ALL
     SELECT
-        {{ generate_surrogate_key(['inventory_date', 'film_id', 'store_id', -1]) }} AS inventory_movement_id,
+        {{ dbt_utils.generate_surrogate_key(['inventory_date', 'film_id', 'store_id', -1]) }} AS inventory_movement_id,
         *
     FROM inventory_decrease
     UNION ALL
     SELECT
-        {{ generate_surrogate_key(['inventory_date', 'film_id', 'store_id', 1]) }} AS inventory_movement_id,
+        {{ dbt_utils.generate_surrogate_key(['inventory_date', 'film_id', 'store_id', 1]) }} AS inventory_movement_id,
         *
     FROM inventory_increase
 )
