@@ -1,5 +1,6 @@
 -- This solution is written for SQLite querying
 {{config(
+    meta={'database': 'sqlite'},
     tags=['dvd_rentals']
 )}}
 

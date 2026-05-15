@@ -1,11 +1,17 @@
 {% macro activity_generator(dimension='', dimension_date='', source='') %}
 
+{% if model.config.meta.database == 'sqlite' %}
+    {% set int_rentals = ref('int_rentals') %}
+{% elif model.config.meta.database == 'duckdb' %}
+    {% set int_rentals = ref('db__int_rentals') %}
+{% endif %}
+
 WITH RECURSIVE dates(dimension_date) AS (
-    VALUES((SELECT MIN(rental_date) FROM {{ ref('int_rentals') }}))
+    VALUES((SELECT MIN(rental_date) FROM {{ int_rentals }}))
     UNION ALL
-    SELECT date(dimension_date, '+1 day')
+    SELECT CAST(strftime('%Y-%m-%d', dimension_date, '+1 day') AS DATE)
     FROM dates
-    WHERE dimension_date < (SELECT MAX(rental_date) FROM {{ ref('int_rentals') }})
+    WHERE dimension_date < (SELECT MAX(rental_date) FROM {{ int_rentals }})
 ),
 {{ dimension }} AS (
     SELECT 
@@ -27,14 +33,14 @@ daily_activity AS (
         rentals.rental_id IS NOT NULL AS had_activity
     FROM {{ dimension }}
     CROSS JOIN dates
-    LEFT JOIN {{ ref('int_rentals') }} rentals
+    LEFT JOIN {{ int_rentals }} rentals
         ON {{ dimension }}.{{ dimension }}_id = rentals.{{ dimension }}_id
-        AND dates.dimension_date = DATE(rentals.rental_date)
+        AND dates.dimension_date = rentals.rental_date
     WHERE dates.dimension_date >= {{ dimension }}.{{ dimension_date }}
 ),
 monthly_activity AS (
 SELECT 
-    DATE(dimension_date, 'start of month') AS month_date,
+    CAST(strftime('%Y-%m-01', dimension_date) AS DATE) AS month_date,
     {{ dimension }}_id,
     SUM(had_activity) AS rental_quantity,
     SUM(had_activity) > 0 AS had_activity
