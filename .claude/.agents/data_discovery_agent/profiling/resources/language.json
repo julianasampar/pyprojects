@@ -1,0 +1,74 @@
+{
+  "table": "language",
+  "row_count": 6,
+  "columns": {
+    "language_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 6,
+        "mean": 3.5,
+        "std": 1.8708286933869707,
+        "min": 1,
+        "25%": 2.25,
+        "50%": 3.5,
+        "75%": 4.75,
+        "max": 6
+      },
+      "distinct": {
+        "distinct_count": 6,
+        "values": [
+          3,
+          6,
+          5,
+          2,
+          4,
+          1
+        ],
+        "skipped": false
+      }
+    },
+    "name": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 6,
+        "unique": 6,
+        "top": "German              ",
+        "freq": 1
+      },
+      "distinct": {
+        "distinct_count": 6,
+        "values": [
+          "French              ",
+          "Italian             ",
+          "German              ",
+          "Mandarin            ",
+          "Japanese            ",
+          "English             "
+        ],
+        "skipped": false
+      }
+    },
+    "last_update": {
+      "type": "categorical",
+      "dtype": "TIMESTAMP",
+      "nullable": true,
+      "metrics": {
+        "count": 6,
+        "unique": 1,
+        "top": "2006-02-15 10:02:19",
+        "freq": 6
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "2006-02-15 10:02:19"
+        ],
+        "skipped": false
+      }
+    }
+  }
+}

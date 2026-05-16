@@ -1,0 +1,76 @@
+{
+  "table": "actor",
+  "row_count": 200,
+  "columns": {
+    "actor_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 200,
+        "mean": 100.5,
+        "std": 57.879184513951124,
+        "min": 1,
+        "25%": 50.75,
+        "50%": 100.5,
+        "75%": 150.25,
+        "max": 200
+      },
+      "distinct": {
+        "distinct_count": 200,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "first_name": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 200,
+        "unique": 128,
+        "top": "Kenneth",
+        "freq": 4
+      },
+      "distinct": {
+        "distinct_count": 128,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "last_name": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 200,
+        "unique": 121,
+        "top": "Kilmer",
+        "freq": 5
+      },
+      "distinct": {
+        "distinct_count": 121,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "last_update": {
+      "type": "categorical",
+      "dtype": "TIMESTAMP",
+      "nullable": true,
+      "metrics": {
+        "count": 200,
+        "unique": 1,
+        "top": "2013-05-26 14:47:57.620000",
+        "freq": 200
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "2013-05-26 14:47:57.620000"
+        ],
+        "skipped": false
+      }
+    }
+  }
+}

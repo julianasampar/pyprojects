@@ -1,0 +1,223 @@
+{
+  "table": "staff",
+  "row_count": 2,
+  "columns": {
+    "staff_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "mean": 1.5,
+        "std": 0.7071067811865476,
+        "min": 1,
+        "25%": 1.25,
+        "50%": 1.5,
+        "75%": 1.75,
+        "max": 2
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          2,
+          1
+        ],
+        "skipped": false
+      }
+    },
+    "first_name": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "unique": 2,
+        "top": "Mike",
+        "freq": 1
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          "Mike",
+          "Jon"
+        ],
+        "skipped": false
+      }
+    },
+    "last_name": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "unique": 2,
+        "top": "Hillyer",
+        "freq": 1
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          "Stephens",
+          "Hillyer"
+        ],
+        "skipped": false
+      }
+    },
+    "address_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "mean": 3.5,
+        "std": 0.7071067811865476,
+        "min": 3,
+        "25%": 3.25,
+        "50%": 3.5,
+        "75%": 3.75,
+        "max": 4
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          4,
+          3
+        ],
+        "skipped": false
+      }
+    },
+    "email": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "unique": 2,
+        "top": "Mike.Hillyer@sakilastaff.com",
+        "freq": 1
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          "Jon.Stephens@sakilastaff.com",
+          "Mike.Hillyer@sakilastaff.com"
+        ],
+        "skipped": false
+      }
+    },
+    "store_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "mean": 1.5,
+        "std": 0.7071067811865476,
+        "min": 1,
+        "25%": 1.25,
+        "50%": 1.5,
+        "75%": 1.75,
+        "max": 2
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          1,
+          2
+        ],
+        "skipped": false
+      }
+    },
+    "active": {
+      "type": "categorical",
+      "dtype": "BOOLEAN",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "unique": 1,
+        "top": true,
+        "freq": 2
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          true
+        ],
+        "skipped": false
+      }
+    },
+    "username": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "unique": 2,
+        "top": "Mike",
+        "freq": 1
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          "Mike",
+          "Jon"
+        ],
+        "skipped": false
+      }
+    },
+    "password": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "unique": 1,
+        "top": "8cb2237d0679ca88db6464eac60da96345513964",
+        "freq": 2
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "8cb2237d0679ca88db6464eac60da96345513964"
+        ],
+        "skipped": false
+      }
+    },
+    "last_update": {
+      "type": "categorical",
+      "dtype": "TIMESTAMP",
+      "nullable": true,
+      "metrics": {
+        "count": 2,
+        "unique": 1,
+        "top": "2006-05-16 16:13:11.793280",
+        "freq": 2
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "2006-05-16 16:13:11.793280"
+        ],
+        "skipped": false
+      }
+    },
+    "picture": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 1,
+        "unique": 1,
+        "top": "\\x89504e470d0a5a0a",
+        "freq": 1
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "\\x89504e470d0a5a0a"
+        ],
+        "skipped": false
+      }
+    }
+  }
+}

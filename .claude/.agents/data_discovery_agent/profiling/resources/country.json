@@ -1,0 +1,60 @@
+{
+  "table": "country",
+  "row_count": 109,
+  "columns": {
+    "country_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 109,
+        "mean": 55.0,
+        "std": 31.609597698589372,
+        "min": 1,
+        "25%": 28.0,
+        "50%": 55.0,
+        "75%": 82.0,
+        "max": 109
+      },
+      "distinct": {
+        "distinct_count": 109,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "country": {
+      "type": "categorical",
+      "dtype": "VARCHAR",
+      "nullable": true,
+      "metrics": {
+        "count": 109,
+        "unique": 109,
+        "top": "Brunei",
+        "freq": 1
+      },
+      "distinct": {
+        "distinct_count": 109,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "last_update": {
+      "type": "categorical",
+      "dtype": "TIMESTAMP",
+      "nullable": true,
+      "metrics": {
+        "count": 109,
+        "unique": 1,
+        "top": "2006-02-15 09:44:00",
+        "freq": 109
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "2006-02-15 09:44:00"
+        ],
+        "skipped": false
+      }
+    }
+  }
+}

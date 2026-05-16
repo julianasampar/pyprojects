@@ -72,6 +72,8 @@ If a spec file path is provided, go directly to Mode 2.
       - unique: Number of distinct values.
       - top: The most frequent value (mode).
       - freq: How many times the 'top' value appears
+
+3. **Categorical Values**: For each table and for each non-key categorical columns only, retrieve the possible distinct values. 
    
 ### Step 2: Data Structure
 
@@ -79,7 +81,6 @@ If a spec file path is provided, go directly to Mode 2.
 
 2. **Foreign Keys**: For each table, identify the Foreign Keys. If the table doesn't have FKs, skip this step.
 
-3. **Categorical Values**: For each table and for each non-key categorical columns only, retrieve the possible distinct values. 
 
 3. **Orchestration**: For each table, identify the ETL update timestamp column, along with the scheduling strategy and refresh latency. If it is not possible to collect the information, skip this step. Some examples are: 
    > A source materialized as view

@@ -1,0 +1,87 @@
+{
+  "table": "inventory",
+  "row_count": 4581,
+  "columns": {
+    "inventory_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 4581,
+        "mean": 2291.0,
+        "std": 1322.5651212700266,
+        "min": 1,
+        "25%": 1146.0,
+        "50%": 2291.0,
+        "75%": 3436.0,
+        "max": 4581
+      },
+      "distinct": {
+        "distinct_count": 4581,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "film_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 4581,
+        "mean": 500.9362584588518,
+        "std": 288.5896504193145,
+        "min": 1,
+        "25%": 253.0,
+        "50%": 496.0,
+        "75%": 753.0,
+        "max": 1000
+      },
+      "distinct": {
+        "distinct_count": 958,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "store_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 4581,
+        "mean": 1.5044750054573237,
+        "std": 0.5000345539126047,
+        "min": 1,
+        "25%": 1.0,
+        "50%": 2.0,
+        "75%": 2.0,
+        "max": 2
+      },
+      "distinct": {
+        "distinct_count": 2,
+        "values": [
+          2,
+          1
+        ],
+        "skipped": false
+      }
+    },
+    "last_update": {
+      "type": "categorical",
+      "dtype": "TIMESTAMP",
+      "nullable": true,
+      "metrics": {
+        "count": 4581,
+        "unique": 1,
+        "top": "2006-02-15 10:09:17",
+        "freq": 4581
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "2006-02-15 10:09:17"
+        ],
+        "skipped": false
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "table": "film_actor",
+  "row_count": 5462,
+  "columns": {
+    "actor_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 5462,
+        "mean": 100.95239838886854,
+        "std": 56.99385180587338,
+        "min": 1,
+        "25%": 52.0,
+        "50%": 102.0,
+        "75%": 149.0,
+        "max": 200
+      },
+      "distinct": {
+        "distinct_count": 200,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "film_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 5462,
+        "mean": 501.14243866715486,
+        "std": 287.9673211023044,
+        "min": 1,
+        "25%": 252.0,
+        "50%": 503.0,
+        "75%": 748.0,
+        "max": 1000
+      },
+      "distinct": {
+        "distinct_count": 997,
+        "values": null,
+        "skipped": true
+      }
+    },
+    "last_update": {
+      "type": "categorical",
+      "dtype": "TIMESTAMP",
+      "nullable": true,
+      "metrics": {
+        "count": 5462,
+        "unique": 1,
+        "top": "2006-02-15 10:05:03",
+        "freq": 5462
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          "2006-02-15 10:05:03"
+        ],
+        "skipped": false
+      }
+    }
+  }
+}
