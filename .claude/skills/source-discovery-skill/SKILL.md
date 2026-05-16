@@ -116,3 +116,5 @@ If a spec file path is provided, go directly to Mode 2.
 ### Step 5: Logging the Results
 1. **File Creation**: Create a file for each source under the provided storage path. If path not provided, write under the default path. The file name should be written as "<name_of_source>__<current_timestamp>".
    - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/resources
+
+   
