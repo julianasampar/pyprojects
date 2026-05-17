@@ -1,6 +1,6 @@
 ---
 name: inspector
-description: "Read JSON files to explore data sources and grasp their underlying architecture. Resort to orchestration.md file to understand when this skill should run."
+description: "Read JSON files to explore data sources and grasp their underlying architectural structure."
 argument-hint: "[--json-storage-path] [--source-domain]"
 metadata:
   last-updated: 2026-05-16 20:59 UTC
@@ -23,7 +23,7 @@ metadata:
 **What It Does**: Connects to the file system storage and reads JSON files of the related data source specified domain. Performs discovery analysis, such as identifying PKs, FKs, Orchestration patterns and relationships.
 
 **Hooks**:
-> **`/inspector`** defines the task for READING JSON files and WRITING the interpreted results. 
+> **`/inspector`** defines the task for READING JSON files and WRITING the interpreted results on the structure of the data . 
 
 **Example**:
 > User: /inspector
@@ -93,8 +93,7 @@ The provided JSON file has the following structure:
 
    For every data source, compute an Entity-Relationship-Diagram with all other data sourcer that it relates and the respective columns with their keys. Represent the ERD as a Mermaid diagram using erDiagram syntax.
 
-5. **Output**
-1. **File Creation**: Write one file per table. If path not provided, write under the default path. The file name should be written as "<name_of_datasource>__<current_timestamp>".
-   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/architect/resources
+5. **File Creation**: Write one file per table. If path not provided, write under the default path. The file name should be written as "<name_of_datasource>__<current_timestamp>".
+   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/inspector/resources/<name_of_datasource>
 
    
