@@ -9,7 +9,7 @@ load_dotenv()
 client = anthropic.Anthropic()
 
 # ── 1. LOAD THE SKILL AS THE SYSTEM PROMPT ──────────────────
-def _load_skill(path: str = ".claude/agents/data_discovery_agent/architect/architect-discovery/SKILL.md") -> str:
+def _load_skill(path: str = ".claude/agents/data_discovery_agent/architect/SKILL.md") -> str:
     return Path(path).read_text(encoding="utf-8")
 
 

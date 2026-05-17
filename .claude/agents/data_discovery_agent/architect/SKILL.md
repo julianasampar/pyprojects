@@ -1,5 +1,5 @@
 ---
-name: architect-discovery
+name: architect
 description: "Read JSON files to explore data sources and grasp their underlying architecture. Resort to orchestration.md file to understand when this skill should run."
 argument-hint: "[--json-storage-path] [--source-domain]"
 metadata:
