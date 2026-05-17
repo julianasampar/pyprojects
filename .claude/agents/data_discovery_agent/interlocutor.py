@@ -8,7 +8,6 @@ load_dotenv()
 client = Anthropic()
 model = "claude-haiku-4-5"
 max_tokens=1000
-system_prompt = "You are a helpful assistant specialized in botanic."
 
 # Creating functions to maintain context for conversations
 
@@ -20,16 +19,29 @@ def add_assistant_message(messages, text):
     assistant_message = {"role": "assistant", "content": text}
     messages.append(assistant_message)
 
-def chat(messages):
-    message = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        messages=messages,
-        system=system_prompt
-    )
-    return message.content[0].text
 
-def conversation(messages):
+def interaction(**params):
+    stream = client.messages.stream(**params)
+
+    with stream as stream:
+        for text in stream.text_stream:
+            print(text, end="")
+
+    response = stream.get_final_message()
+
+    return response.content[0].text
+
+def chat(messages, system=None):
+    params = {
+        "model": model,
+        "max_tokens": max_tokens,
+        "messages":messages,
+        "temperature": 0.6,
+        }
+    
+    if system:
+        params["system"] = system
+    
     while True:
         try: 
             user_prompt = input("Prompt: ")
@@ -44,6 +56,10 @@ def conversation(messages):
 
         add_user_message(messages, user_prompt)
         print(f"User: {user_prompt}")
-        answer = chat(messages)
+        answer = interaction(**params)
         print(f"Assistant: {answer}")
         add_assistant_message(messages, answer)
+
+messages = []
+#system = "You are a data expert in charge of a data discovery project that interacts in a concise way."
+chat(messages=messages)
