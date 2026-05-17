@@ -150,26 +150,3 @@ def load_all_profiles(profiles_dir: str = "./profiles") -> dict:
         profiles[table_name] = load_table_profile(table_name, profiles_dir)
 
     return profiles
-
-
-# ─────────────────────────────────────────────────────────────
-# QUICK TEST
-# ─────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    from reader import get_datasource
-    from profiler import profile_all_tables
-
-    # Stage 1: profile and save
-    source   = get_datasource("csv", folder_path="/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store")
-    results  = profile_all_tables(source)
-    save_profiles(results, output_dir="/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/.agents/data_discovery_agent/profiling/resources")
-
-    # Stage 2 (simulated): load what the orchestrator would see
-    print("\n=== Manifest ===")
-    manifest = load_manifest("/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/.agents/data_discovery_agent/profiling/resources")
-    print(json.dumps(manifest, indent=2))
-
-    print("\n=== Single table load (rental) ===")
-    rental = load_table_profile("rental", "/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/.agents/data_discovery_agent/profiling/resources")
-    print(f"Columns: {list(rental['columns'].keys())}")

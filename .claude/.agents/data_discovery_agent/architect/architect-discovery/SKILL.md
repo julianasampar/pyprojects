@@ -39,15 +39,48 @@ metadata:
 
 If no argument is provided, present a interactive usage menu walking through questions one by one.
 
+The provided JSON file has the following structure:
+```
+{
+  "table": "table_name",
+  "row_count": 1,
+  "columns": {
+    "table_id": {
+      "type": "numeric",
+      "dtype": "BIGINT",
+      "nullable": true,
+      "metrics": {
+        "count": 1,
+        "mean": 1,
+        "std": 0,
+        "min": 1,
+        "25%": 1,
+        "50%": 1,
+        "75%": 1,
+        "max": 1
+      },
+      "distinct": {
+        "distinct_count": 1,
+        "values": [
+          1,
+        ],
+        "skipped": false
+      },
+      "latest_dates": null
+      }
+    }
+  }
+```
+
 
 ## Steps
 
- 1. **Primary Keys**: For each table, identify the Primary Key or main unique identifier. If the table doesn't have a PK, create a hypothesis about which column combination makes the rows unique.
+ 1. **Primary Keys**: For each table, identify the Primary Key or main unique identifier column. If the table doesn't have a PK, create and document a hypothesis about which column combination makes the rows unique. The hypothesis will be tested in the following step.
 
 2. **Foreign Keys**: For each table, identify the Foreign Keys. If the table doesn't have FKs, skip this step.
 
 
-3. **Orchestration**: For each table, identify the update timestamp column. Derive information about scheduling strategy and refresh latency. If it is not possible to collect the information, skip this step. Some examples are: 
+3. **Orchestration**: For each table, identify the update timestamp column. Derive information about scheduling strategy and refresh latency using the JSON key `latest_dates`. The `latest_dates` key returns the last 10 dates in descending order for datetime columns. If it is not possible to collect the information, skip this step. Some examples are: 
 
    > A source materialized as table, full-refresh every run.
 

@@ -23,11 +23,22 @@ NUMERIC_TYPES = {
     "REAL", "INT", "INT2", "INT4", "INT8",
 }
 
+DATE_TYPES = {
+    "DATE", "TIMESTAMP", "TIMESTAMPTZ",
+    "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITHOUT TIME ZONE",
+    "TIME", "TIMETZ",
+}
+
 def _is_numeric(col_type: str) -> bool:
     """Returns True if the DuckDB column type is numeric."""
     # Normalize to uppercase and strip precision info (e.g. "DECIMAL(10,2)" → "DECIMAL")
     base_type = col_type.upper().split("(")[0].strip()
     return base_type in NUMERIC_TYPES
+
+def _is_date(col_type: str) -> bool:
+    """Returns True if the DuckDB column type is date or timestamp."""
+    base_type = col_type.upper().split("(")[0].strip()
+    return base_type in DATE_TYPES
 
 
 # ─────────────────────────────────────────────────────────────
@@ -179,6 +190,46 @@ def _get_distinct_values(
     }
 
 
+
+# ─────────────────────────────────────────────────────────────
+# LATEST DATE VALUES
+# ─────────────────────────────────────────────────────────────
+
+def _get_latest_date_values(
+    conn: "duckdb.DuckDBPyConnection",
+    table_ref: str,
+    col: str,
+    limit: int = 10,
+) -> list:
+    """
+    Returns the last `limit` non-null values of a date/timestamp column,
+    ordered most-recent first. Nulls are excluded.
+
+    This helps the LLM understand the temporal range and freshness of the data.
+    For example, seeing the last 10 rental dates tells it whether the table is
+    current, historical, or stale.
+
+    Parameters:
+        conn      : the active DuckDB connection
+        table_ref : SQL reference to the table
+        col       : name of the date/timestamp column
+        limit     : how many recent values to return (default: 10)
+
+    Returns a list of ISO-formatted date strings, most recent first:
+        ["2006-02-14", "2006-02-13", "2006-02-12", ...]
+    """
+    rows = conn.execute(f"""
+        SELECT DISTINCT "{col}"
+        FROM {table_ref}
+        WHERE "{col}" IS NOT NULL
+        ORDER BY "{col}" DESC
+        LIMIT {limit}
+    """).fetchall()
+
+    # Convert each value to string (handles both date and timestamp types cleanly)
+    return [str(row[0]) for row in rows]
+
+
 # ─────────────────────────────────────────────────────────────
 # MAIN PROFILING FUNCTION
 # ─────────────────────────────────────────────────────────────
@@ -221,12 +272,19 @@ def profile_table(source: DataSource, table_name: str, distinct_threshold: int =
 
         distinct = _get_distinct_values(conn, table_ref, col_name, threshold=distinct_threshold)
 
+        # For date columns, fetch the last 10 values so the LLM can reason about
+        # data freshness, temporal range, and activity patterns
+        latest_dates = None
+        if _is_date(col_type):
+            latest_dates = _get_latest_date_values(conn, table_ref, col_name)
+
         columns_profile[col_name] = {
-            "type":     col_kind,
-            "dtype":    col_type,       # original DuckDB type (e.g. "VARCHAR", "INTEGER")
-            "nullable": col_def["nullable"],
-            "metrics":  metrics,
-            "distinct": distinct,
+            "type":         col_kind,
+            "dtype":        col_type,       # original DuckDB type (e.g. "VARCHAR", "INTEGER")
+            "nullable":     col_def["nullable"],
+            "metrics":      metrics,
+            "distinct":     distinct,
+            "latest_dates": latest_dates,   # None for non-date columns
         }
 
     return {
@@ -280,4 +338,3 @@ def _build_table_ref(source: DataSource, table_name: str) -> str:
 
     # Future: BigQueryDataSource, SnowflakeDataSource, etc.
     raise NotImplementedError(f"No table_ref builder for source type: {type(source).__name__}")
-
