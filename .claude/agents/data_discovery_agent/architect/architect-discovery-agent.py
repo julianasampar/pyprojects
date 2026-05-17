@@ -82,7 +82,11 @@ def _run_tool(tool_name: str, tool_input: dict) -> str:
     elif tool_name == "read_json_file":
         result = read_json_file(**tool_input)
     elif tool_name == "write_result_file":
-        result = write_result_file(**tool_input)
+        print(f"[write_result_file] received keys: {list(tool_input.keys())}")
+        result = write_result_file(
+            output_path=tool_input["output_path"],
+            content=tool_input["content"],
+        )
     else:
         result = f"Unknown tool: {tool_name}"
     return json.dumps(result, default=str)
@@ -119,7 +123,7 @@ def run_architect_agent(json_storage_path: str, source_domain: str) -> str:
     # The loop runs until the agent stops calling tools (stop_reason = "end_turn")
     while True:
         response = client.messages.create(
-            model="claude-sonnet-4-6",
+            model="claude-sonnet-4-5",
             max_tokens=8096,
             system=system_prompt,
             tools=TOOLS,
