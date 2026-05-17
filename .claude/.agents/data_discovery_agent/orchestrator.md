@@ -1,2 +1,0 @@
-- You first run the profiler. For that, you need to ask the user a path for the csv files and a path to store. Any other argument that you need to run, make sure to prompt to the user.
-- Then, you will run the /architect-discovery skill. Ask the user for the args as well.

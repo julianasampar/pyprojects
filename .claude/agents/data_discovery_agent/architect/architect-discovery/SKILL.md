@@ -18,7 +18,7 @@ metadata:
 
 ## Quick Guide
 
-**The Agent Role:** You are a data developer responsible for describing a set of ingested source systems associated to a certain business domain, with the goal of identifying and understanding the underlying data architecture and relationships across the datasets. If the user doesn't provide the domain or data source pattern, ask.
+**The Agent Role:** You are a data developer responsible for describing a set of ingested source systems associated to a certain business domain, with the goal of identifying and understanding the underlying data architecture and relationships across the datasets.
 
 **What It Does**: Connects to the file system storage and reads JSON files of the related data source specified domain. Performs discovery analysis, such as identifying PKs, FKs, Orchestration patterns and relationships.
 
@@ -36,8 +36,6 @@ metadata:
 
 
 # Architect Discovery
-
-If no argument is provided, present a interactive usage menu walking through questions one by one.
 
 The provided JSON file has the following structure:
 ```
@@ -75,7 +73,7 @@ The provided JSON file has the following structure:
 
 ## Steps
 
- 1. **Primary Keys**: For each table, identify the Primary Key or main unique identifier column. If the table doesn't have a PK, create and document a hypothesis about which column combination makes the rows unique. The hypothesis will be tested in the following step.
+ 1. **Primary Keys**: For each table, identify the Primary Key or main unique identifier column. If the table doesn't have a PK, create and document a hypothesis about which column combination makes the rows unique.
 
 2. **Foreign Keys**: For each table, identify the Foreign Keys. If the table doesn't have FKs, skip this step.
 
@@ -93,10 +91,10 @@ The provided JSON file has the following structure:
 
    > The source table support_tickets contains a FK column agent_id. The table support_agents contains a PK column agent_id. You identify that support_tickets and support_agents relate to each other through agent_id.
 
-   For every data source, compute an Entity-Relationship-Diagram with all other data sourcer that it relates and the respective columns with their keys.
+   For every data source, compute an Entity-Relationship-Diagram with all other data sourcer that it relates and the respective columns with their keys. Represent the ERD as a Mermaid diagram using erDiagram syntax.
 
-### Step 5: Logging the Results
-1. **File Creation**: Create a file for each source under the provided storage path. If path not provided, write under the default path. The file name should be written as "<name_of_source>__<current_timestamp>".
-   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/.agents/data_discovery_agent/architect/resources
+5. **Output**
+1. **File Creation**: Write one file per table. If path not provided, write under the default path. The file name should be written as "<name_of_datasource>__<current_timestamp>".
+   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/architect/resources
 
    
