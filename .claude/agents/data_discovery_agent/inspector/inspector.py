@@ -1,4 +1,4 @@
-# architect_agent.py
+# inspector_agent.py
 
 import anthropic
 import json
@@ -8,15 +8,11 @@ from dotenv import load_dotenv
 load_dotenv()
 client = anthropic.Anthropic()
 
-# ── 1. LOAD THE SKILL AS THE SYSTEM PROMPT ──────────────────
-def _load_skill(path: str = ".claude/agents/data_discovery_agent/architect/SKILL.md") -> str:
+# Load the Skills
+def _load_skill(path: str = ".claude/agents/data_discovery_agent/inspector/SKILL.md") -> str:
     return Path(path).read_text(encoding="utf-8")
 
-
-# ── 2. DEFINE THE TOOLS THE AGENT CAN USE ───────────────────
-# These are what replaces "the agent reads files" — it does it
-# through tools, not by magic.
-
+# Define the tools the Agent will load
 TOOLS = [
     {
         "name": "list_json_files",
@@ -56,7 +52,7 @@ TOOLS = [
 ]
 
 
-# ── 3. IMPLEMENT THE TOOLS (pure Python, no LLM) ────────────
+# Implement the tools 
 
 def list_json_files(directory: str, domain: str = None) -> list[str]:
     path = Path(directory)
@@ -92,11 +88,11 @@ def _run_tool(tool_name: str, tool_input: dict) -> str:
     return json.dumps(result, default=str)
 
 
-# ── 4. THE AGENTIC LOOP ──────────────────────────────────────
+# Agentic Loop
 
-def run_architect_agent(json_storage_path: str, source_domain: str) -> str:
+def run_inspector_agent(json_storage_path: str, source_domain: str) -> str:
     """
-    Runs the architect-discovery sub-agent.
+    Runs the inspector sub-agent.
 
     Parameters:
         json_storage_path : where the profiler JSON files are stored
@@ -111,14 +107,14 @@ def run_architect_agent(json_storage_path: str, source_domain: str) -> str:
         {
             "role": "user",
             "content": (
-                f"/architect-discovery "
+                f"/inspector-discovery "
                 f"--json-storage-path {json_storage_path} "
                 f"--source-domain {source_domain}"
             ),
         }
     ]
 
-    print(f"[architect-agent] Starting for domain: {source_domain}")
+    print(f"[inspector-agent] Starting for domain: {source_domain}")
 
     # The loop runs until the agent stops calling tools (stop_reason = "end_turn")
     while True:
@@ -143,14 +139,14 @@ def run_architect_agent(json_storage_path: str, source_domain: str) -> str:
                 (block.text for block in response.content if hasattr(block, "text")),
                 "No response generated."
             )
-            print(f"[architect-agent] Done.")
+            print(f"[inspector-agent] Done.")
             return final_text
 
         # Execute every tool call and collect ALL results into one message
         # This is critical — all tool_results must go back in a single user message
         tool_results = []
         for block in tool_use_blocks:
-            print(f"[architect-agent] Tool call: {block.name}({block.input})")
+            print(f"[inspector-agent] Tool call: {block.name}({block.input})")
             result = _run_tool(block.name, block.input)
             tool_results.append({
                 "type":        "tool_result",
@@ -160,12 +156,3 @@ def run_architect_agent(json_storage_path: str, source_domain: str) -> str:
 
         # Send all results back in one single user message
         messages.append({"role": "user", "content": tool_results})
-
-
-
-result = run_architect_agent(
-    json_storage_path="/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/profiler/resources/dvd_rental",
-    source_domain="dvd_rentals"
-)
-
-print(result)

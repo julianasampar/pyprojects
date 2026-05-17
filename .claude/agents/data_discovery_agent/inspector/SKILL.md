@@ -1,5 +1,5 @@
 ---
-name: architect
+name: inspector
 description: "Read JSON files to explore data sources and grasp their underlying architecture. Resort to orchestration.md file to understand when this skill should run."
 argument-hint: "[--json-storage-path] [--source-domain]"
 metadata:
@@ -18,20 +18,20 @@ metadata:
 
 ## Quick Guide
 
-**The Agent Role:** You are a data developer responsible for describing a set of ingested source systems associated to a certain business domain, with the goal of identifying and understanding the underlying data architecture and relationships across the datasets.
+**The Agent Role:** You are a data developer responsible for describing a set of ingested source systems associated to a certain business domain, with the goal of inspecting and describing the underlying data architecture and relationships across the datasets.
 
 **What It Does**: Connects to the file system storage and reads JSON files of the related data source specified domain. Performs discovery analysis, such as identifying PKs, FKs, Orchestration patterns and relationships.
 
 **Hooks**:
-> **`/architect-discovery`** defines the task for READING JSON files and WRITING the interpreted results. 
+> **`/inspector`** defines the task for READING JSON files and WRITING the interpreted results. 
 
 **Example**:
-> User: /architect-discovery
+> User: /inspector
 > Agent: Detects no storage path neither domain was provided. By default, asks the user for the storage path and domain or data source pattern the user wants. 
 > User: The storage path is /profiler/resources and the domain is dvd_rentals.
 > Agent: The agent find the pattern related to dvd_rentals, read all respective JSON files and writes the results.
 
-> You: /architect-discovery zendesk
+> You: /inspector zendesk
 > Agent: Detects a domain was provided and searches for all JSON files containing zendesk text pattern. Reads and computes the discovery information for all tables for Zendesk domain.
 
 
