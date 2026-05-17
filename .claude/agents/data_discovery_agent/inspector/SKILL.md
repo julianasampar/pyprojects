@@ -94,6 +94,6 @@ The provided JSON file has the following structure:
    For every data source, compute an Entity-Relationship-Diagram with all other data sourcer that it relates and the respective columns with their keys. Represent the ERD as a Mermaid diagram using erDiagram syntax.
 
 5. **File Creation**: Write one file per table. If path not provided, write under the default path. The file name should be written as "<name_of_datasource>__<current_timestamp>".
-   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/inspector/resources/<name_of_datasource>
+   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/inspector/resources/<domain>/<name_of_datasource>
 
    

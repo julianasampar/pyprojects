@@ -79,5 +79,5 @@ The provided JSON file has the following structure:
 2. **Business Descriptions**: Using the knowledge observed in the data from the previous steps, connect them to business knowledge from the specified domain and write additional non-data related information.
 
 3. **File Creation**: Write one file per table. If path not provided, write under the default path. The file name should be written as "<name_of_datasource>__<current_timestamp>".
-   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/behaviorist/resources/<name_of_datasource>
+   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/agents/data_discovery_agent/behaviorist/resources/<domain>/<name_of_datasource>
    
