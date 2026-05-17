@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "architect-discovery",
+      "path": ".claude/.agents/data_discovery_agent/architect/architect-discovery",
+      "command": "python .claude/.agents/data_discovery_agent/discovery-agent.py"
+    }
+  ]
+}

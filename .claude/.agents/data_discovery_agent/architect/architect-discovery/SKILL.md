@@ -1,5 +1,5 @@
 ---
-name: architect
+name: architect-discovery
 description: "Read JSON files to explore data sources and grasp their underlying architecture. Resort to orchestration.md file to understand when this skill should run."
 argument-hint: "[--json-storage-path] [--source-domain]"
 metadata:
@@ -64,6 +64,6 @@ If no argument is provided, present a interactive usage menu walking through que
 
 ### Step 5: Logging the Results
 1. **File Creation**: Create a file for each source under the provided storage path. If path not provided, write under the default path. The file name should be written as "<name_of_source>__<current_timestamp>".
-   - Default Path: ./resources
+   - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/.agents/data_discovery_agent/architect/resources
 
    
