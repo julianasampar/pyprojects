@@ -119,7 +119,7 @@ def run_inspector_agent(json_storage_path: str, source_domain: str) -> str:
     # The loop runs until the agent stops calling tools (stop_reason = "end_turn")
     while True:
         response = client.messages.create(
-            model="claude-sonnet-4-5",
+            model="claude-haiku-4-5",
             max_tokens=8096,
             system=system_prompt,
             tools=TOOLS,
