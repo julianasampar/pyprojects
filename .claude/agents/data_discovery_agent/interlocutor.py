@@ -1,5 +1,6 @@
 from anthropic import Anthropic
 from dotenv import load_dotenv
+from profiler.reader import get_datasource
 import duckdb
 
 # Loading Anthropic API Key
@@ -79,6 +80,10 @@ def chat(messages, system=None):
         answer = interaction(**params)
         add_assistant_message(messages, answer)
 
+
+def autofill_datasources():
+    datasources = get_datasource('csv', folder_path='/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store')
+    datasources = datasources.list_tables()
 
 
 messages = []
