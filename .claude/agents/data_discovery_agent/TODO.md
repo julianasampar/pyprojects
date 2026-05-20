@@ -6,3 +6,4 @@
 - Add orchestrator agent
 - Switched the json ingested for the one the API returns (with more information)
 - Add autofill suggestions to prompt ingestion
+- Add quality guidelines in skills? Add XML tags?
