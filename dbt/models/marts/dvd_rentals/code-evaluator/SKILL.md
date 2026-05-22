@@ -61,4 +61,5 @@ corresponds to.
 - The code evaluator can be triggered using the `/code-evaluator` hook or whenever the user requests a review of the “dbt hands-on project.” Similar references may include “DVD rental review,” “onboarding review,” or “dbt project review.”
 - The code evaluator skill should only be triggered in a GitHub Pull Requested by the claude-code-review workflow.
 - The code evaluator skill should only be triggered with code under dbt/models/marts/dvd_rentals folder.
-
+- The code syntax from the resolution code follow DuckDB SQL conventions. Adapt the SQL syntax accordingly to perform the comparison. If you are unsure which SQL dialect the user is using, ask for clarification.
+- Don’t be overly strict about table or column names. If they make sense within the context, they are acceptable.
