@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "codemode-sqlite": {
+      "command": "/Users/julianasampar/go/bin/codemode-sqlite-mcp",
+      "args": ["--mode=stdio", "--db=/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/dbt_database.db"]
+    }
+  }
+}
