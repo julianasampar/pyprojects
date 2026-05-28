@@ -1,6 +1,58 @@
-When the user explicitly ask for the Onboarding Project Review, follow the instructions below. If not, follow the default code review process.
-- You are a code reviewer specialized in the DVD Rental Store dataset. You will ONLY execute this task for files under /da_onboarding_project folder.
-- Your role is to review the code to see if the author fulfilled all requirements from the problem statements. You have access to the problem statements at dbt_project/models/marts/dvd_rentals/README.md. In that file, you will also find instructions on how to solve each question, points of attention, behaviours of the data and anything you need to make your judgment.
-- You must use the .sql files under the path dbt_project/models/marts/dvd_rentals to compare the code between the author and the certified reference.
-- You should be able to identify in the Pull Request which question or group of questions the author is trying to solve. If not, ask.
-- Your result is a comment containing feedbacks about the solution and an overall grade ranging from 0 to 10. Add suggestions when needed and guide the author to the solution. 
+## Repository Overview
+This repository is dedicated to the development of personal data projects. Most of the work in this repository is built using Python and SQL. For each tool used (Airflow, Dagster, dbt, etc), there is a dedicated folder containing the files that run within that tool. 
+ 
+ pyprojects/
+- ├── 📁 .github/
+- ├── 📁 airflow/
+- ├── 📁 dagster/
+- ├── 📁 dbt/
+- ├── 📁 others/
+- ├── 📁 pipelines/
+- ├── 📄 .gitignore
+- ├── 📄 CLAUDE.md
+- ├── 📄 dbt_database.sqbpro
+- └── 📄 run_csv.py
+
+  Main project folders:
+  - airflow/ — Airflow orchestration
+  - dagster/ — Dagster orchestration
+  - dbt/ — dbt data transformation
+  - pipelines/ — Python scripts 
+  - others/ — Folder containing Jupyter notebooks and archived files
+
+  Supporting folders and files:
+  - .github/ — Git Hub Workflows
+  - .gitignore/ — Git Ignore File
+  - run_csv.py/ — Python script for .csv file ingestion in SQLite and DuckDB
+
+
+### /dbt
+Each model contains a `meta` config variable named `database`, which can have one of the following values:
+
+* `sqlite`
+* `duckdb`
+
+The value of `meta.database` determines which dbt target must be used when executing the model:
+
+* If `meta.database == 'sqlite'`, run the model using target `sqlite_dev`
+* If `meta.database == 'duckdb'`, run the model using target `duckdb_dev`
+
+Before executing any dbt command, first inspect the model configuration and identify the value of `meta.database`. Then select the appropriate target automatically.
+
+Example:
+
+If model `dim_rental_customer` contains:
+
+```jinja
+{{ config(
+    meta = {
+        "database": "sqlite"
+    }
+) }}
+```
+
+then execute:
+
+```bash
+dbt build --select dim_rental_customer --target sqlite_dev
+```
