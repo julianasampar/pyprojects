@@ -50,11 +50,11 @@ def interaction(**params):
             print(text, end="")
 
     response = stream.get_final_message()
-    response = response.content[0].text
+    response = response.content[0]
 
     return response
 
-def chat(messages, system=None):
+def chat(messages, system=None, tools=None):
     params = {
         "model": model,
         "max_tokens": max_tokens,
@@ -64,6 +64,9 @@ def chat(messages, system=None):
     
     if system: # system = system message. An initial prompt to give the LLM context about how it should approach the interaction
         params["system"] = system
+
+    if tools:
+        params["tools"] = tools
     
     while True:
         try: 
@@ -89,4 +92,5 @@ def autofill_datasources():
 
 messages = []
 #system = "You are a data expert in charge of a data discovery project that interacts in a concise way."
+#tools = []
 chat(messages=messages)
