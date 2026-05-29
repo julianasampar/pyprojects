@@ -50,8 +50,9 @@ def interaction(**params):
             print(text, end="")
 
     response = stream.get_final_message()
+    response = response.content[0].text
 
-    return response.content[0].text
+    return response
 
 def chat(messages, system=None):
     params = {
@@ -61,7 +62,7 @@ def chat(messages, system=None):
         "temperature": temperature,
         }
     
-    if system:
+    if system: # system = system message. An initial prompt to give the LLM context about how it should approach the interaction
         params["system"] = system
     
     while True:
@@ -70,10 +71,10 @@ def chat(messages, system=None):
             if user_prompt.lower() == 'exit':
                 break
         except KeyboardInterrupt:
-            print('Assistant: Goodbye')
+            print('Assistant: I gotta run, goodbye!')
             break
         except EOFError:
-            print('Assistant: Goodbye')
+            print('Assistant: I gotta run, goodbye!')
             break
 
         add_user_message(messages, user_prompt)
