@@ -2,7 +2,8 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 from profiler.reader import get_datasource
 import duckdb
-import tools
+from tools import utils
+from tools.datetime_tools import get_current_datetime__schema
 
 # Loading Anthropic API Key
 load_dotenv()
@@ -37,12 +38,12 @@ def ingest_metadata(json):
 def add_user_message(messages, text):
     user_message = {"role": "user", "content": text}
     messages.append(user_message)
-    ingest_metadata(user_message)
+    #ingest_metadata(user_message)
 
 def add_assistant_message(messages, text):
     assistant_message = {"role": "assistant", "content": text}
     messages.append(assistant_message)
-    ingest_metadata(assistant_message)
+    #ingest_metadata(assistant_message)
 
 
 # Creating function to send request and stream the LLM's responses
@@ -86,17 +87,19 @@ def chat(messages, system=None, tools=None):
 
         add_user_message(messages, user_prompt)
         response = interaction(**params)
-
+        add_assistant_message(messages, response.content)
 
         while response.stop_reason == 'tool_use':
             print("You need to create this flow!!!")
+            tool_results = utils.run_tool(response)
+            ToolResultBlock = utils.get_tool_result_block(tool_results)
+            add_user_message(messages, ToolResultBlock)
+            response = interaction(**params)
+            add_assistant_message(messages, response.content)
 
             if response.stop_reason != 'tool_use':
                 continue
 
-        add_assistant_message(messages, response.content[0].text)
-
-
 messages = []
-#tools = []
-chat(messages=messages)
+tool = [get_current_datetime__schema]
+chat(messages=messages, tools=tool)
