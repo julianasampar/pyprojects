@@ -1,6 +1,6 @@
 # Defining a function to run the tool (based on the LLM answer) and return the result
 
-from tools.datetime_tools import get_current_datetime
+from tools.datetime_tools import get_current_datetime, add_duration_to_datetime
 
 def run_tool(response):
     tool_results = []
@@ -25,12 +25,22 @@ def get_tool_result_block(tool_results):
     ToolResultBlock = []
 
     for result in tool_results:
-        result_block = { 
-            "tool_use_id": result['id'],
-            "type": "tool_result",
-            "content": result['response'],
-            "is_error": False
-        }
+        try:
+            result_block = { 
+                "tool_use_id": result['id'],
+                "type": "tool_result",
+                "content": result['response'],
+                "is_error": False
+            }
+        
+        except Exception as e: 
+            result_block = { 
+                "tool_use_id": result['id'],
+                "type": "tool_result",
+                "content": f"Failed to execute function. Error: {e}",
+                "is_error": True
+            }
+        
         ToolResultBlock.append(result_block)
 
     return ToolResultBlock

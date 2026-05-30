@@ -1,9 +1,8 @@
 from anthropic import Anthropic
 from dotenv import load_dotenv
-from profiler.reader import get_datasource
 import duckdb
 from tools import utils
-from tools.datetime_tools import get_current_datetime__schema
+from tools.datetime_tools import get_current_datetime__schema, add_duration_to_datetime__schema
 
 # Loading Anthropic API Key
 load_dotenv()
@@ -36,7 +35,7 @@ def ingest_metadata(json):
 
 # Functions add_user_message and add_assistant_message to maintain context for conversations
 def add_user_message(messages, text):
-    user_message = {"role": "user", "content": text}
+    user_message = {"role": "user", "content": text} # contet: message.content if isinstance(message, Message) else message
     messages.append(user_message)
     #ingest_metadata(user_message)
 
@@ -47,7 +46,7 @@ def add_assistant_message(messages, text):
 
 
 # Creating function to send request and stream the LLM's responses
-def interaction(**params):
+def get_request(**params):
     stream = client.messages.stream(**params)
 
     with stream as stream:
@@ -74,7 +73,7 @@ def chat(messages, system=None, tools=None):
 
     if tools: # tools = Python fuctions that the LLM might ask to execute to get external context
         params["tools"] = tools
-    
+
     while True:
         try: 
             user_prompt = input("\nPrompt: ")
@@ -86,15 +85,15 @@ def chat(messages, system=None, tools=None):
             break
 
         add_user_message(messages, user_prompt)
-        response = interaction(**params)
+        response = get_request(**params)
         add_assistant_message(messages, response.content)
 
-        while response.stop_reason == 'tool_use':
-            print("You need to create this flow!!!")
-            tool_results = utils.run_tool(response)
-            ToolResultBlock = utils.get_tool_result_block(tool_results)
+        while response.stop_reason == 'tool_use': # If the LLM requires a tool call
+            tool_outputs = utils.run_tool(response)
+            ToolResultBlock = utils.get_tool_result_block(tool_outputs)
+
             add_user_message(messages, ToolResultBlock)
-            response = interaction(**params)
+            response = get_request(**params)
             add_assistant_message(messages, response.content)
 
             if response.stop_reason != 'tool_use':
