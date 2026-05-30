@@ -54,7 +54,6 @@ def interaction(**params):
             print(text, end="")
 
     response = stream.get_final_message()
-    response = response.content
 
     return response
 
@@ -86,10 +85,16 @@ def chat(messages, system=None, tools=None):
             break
 
         add_user_message(messages, user_prompt)
-        answer = interaction(**params)
+        response = interaction(**params)
 
-        # while stop_reason == 'tool_use'
-        add_assistant_message(messages, answer)
+
+        while response.stop_reason == 'tool_use':
+            print("You need to create this flow!!!")
+
+            if response.stop_reason != 'tool_use':
+                continue
+
+        add_assistant_message(messages, response.content[0].text)
 
 
 messages = []
