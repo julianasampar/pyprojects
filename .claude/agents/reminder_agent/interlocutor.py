@@ -5,6 +5,7 @@ import duckdb
 import json
 from tools import utils
 from tools.datetime_tools import get_current_datetime__schema, add_duration_to_datetime__schema
+from tools.reminder_tools import schedule_notification__schema
 
 # Loading Anthropic API Key
 load_dotenv()
@@ -76,7 +77,7 @@ def chat(messages, system=None, tools=None):
         "model": model,
         "max_tokens": max_tokens,
         "messages":messages,
-        "temperature": temperature,
+        "temperature": temperature
         }
     
     # Adding optional arguments, if they are declated
@@ -107,5 +108,5 @@ def chat(messages, system=None, tools=None):
             continue
 
 messages = []
-tool = [get_current_datetime__schema, add_duration_to_datetime__schema]
+tool = [get_current_datetime__schema, add_duration_to_datetime__schema, schedule_notification__schema]
 chat(messages=messages, tools=tool)
