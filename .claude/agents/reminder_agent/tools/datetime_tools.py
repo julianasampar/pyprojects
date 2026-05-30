@@ -27,7 +27,7 @@ get_current_datetime__schema = ToolParam({
 
 
 ## Defining the tool = Python function
-def add_duration_to_datetime(datetime_str, date_format="%Y-%m-%d", duration=0, unit="days"):
+def add_duration_to_datetime(datetime_str, date_format="%Y-%m-%d %H:%M:%S", duration=0, unit="days"):
     date = datetime.strptime(datetime_str, date_format)
 
     if unit == "seconds":

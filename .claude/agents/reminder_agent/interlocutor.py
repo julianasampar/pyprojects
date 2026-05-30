@@ -1,6 +1,8 @@
 from anthropic import Anthropic
+from anthropic.types import Message
 from dotenv import load_dotenv
 import duckdb
+import json
 from tools import utils
 from tools.datetime_tools import get_current_datetime__schema, add_duration_to_datetime__schema
 
@@ -22,7 +24,7 @@ database_table='agentic_interlocutor_events'
 def ingest_metadata(json):
     connection = duckdb.connect(database)
     connection.sql(f"""CREATE TABLE IF NOT EXISTS {database_table} ( 
-                        json_log JSON,
+                        interaction_log JSON,
                         inserted_at TIMESTAMP
                     );
                     """)
@@ -35,18 +37,22 @@ def ingest_metadata(json):
 
 # Functions add_user_message and add_assistant_message to maintain context for conversations
 def add_user_message(messages, text):
-    user_message = {"role": "user", "content": text} # contet: message.content if isinstance(message, Message) else message
+    user_message = {"role": "user", "content": text if isinstance(text, Message) else text}
     messages.append(user_message)
-    #ingest_metadata(user_message)
+    
+    value_to_insert = json.dumps(user_message, default=str)
+    ingest_metadata(value_to_insert)
 
 def add_assistant_message(messages, text):
-    assistant_message = {"role": "assistant", "content": text}
+    assistant_message = {"role": "assistant", "content": text if isinstance(text, Message) else text}
     messages.append(assistant_message)
-    #ingest_metadata(assistant_message)
+    
+    value_to_insert = json.dumps(assistant_message, default=str)
+    ingest_metadata(value_to_insert)
 
 
 # Creating function to send request and stream the LLM's responses
-def get_request(**params):
+def get_streamed_request(**params):
     stream = client.messages.stream(**params)
 
     with stream as stream:
@@ -57,6 +63,12 @@ def get_request(**params):
 
     return response
 
+
+def interaction(user_input, **params):
+    add_user_message(messages, user_input)
+    response = get_streamed_request(**params)
+    add_assistant_message(messages, response.content)
+    return response
 
 # Creating chat prompting interface and 
 def chat(messages, system=None, tools=None):
@@ -76,29 +88,24 @@ def chat(messages, system=None, tools=None):
 
     while True:
         try: 
-            user_prompt = input("\nPrompt: ")
-            if user_prompt.lower() == 'exit':
+            user_input = input("\nPrompt: ")
+            if user_input.lower() == 'exit':
                 break
         except KeyboardInterrupt:
             break
         except EOFError:
             break
-
-        add_user_message(messages, user_prompt)
-        response = get_request(**params)
-        add_assistant_message(messages, response.content)
+        
+        response = interaction(user_input, **params)
 
         while response.stop_reason == 'tool_use': # If the LLM requires a tool call
             tool_outputs = utils.run_tool(response)
-            ToolResultBlock = utils.get_tool_result_block(tool_outputs)
+            user_input = utils.get_tool_result_block(tool_outputs)
+            response = interaction(user_input, **params)
 
-            add_user_message(messages, ToolResultBlock)
-            response = get_request(**params)
-            add_assistant_message(messages, response.content)
-
-            if response.stop_reason != 'tool_use':
-                continue
+        if response.stop_reason != 'tool_use':
+            continue
 
 messages = []
-tool = [get_current_datetime__schema]
+tool = [get_current_datetime__schema, add_duration_to_datetime__schema]
 chat(messages=messages, tools=tool)

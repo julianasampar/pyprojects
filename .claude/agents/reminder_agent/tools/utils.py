@@ -5,7 +5,9 @@ from tools.datetime_tools import get_current_datetime, add_duration_to_datetime
 def run_tool(response):
     tool_results = []
 
-    for tool in response.content:
+    tool_blocks = [block for block in response.content if block.type == "tool_use"]
+
+    for tool in tool_blocks:
         tool_name = tool.name
         params = tool.input
         id = tool.id
