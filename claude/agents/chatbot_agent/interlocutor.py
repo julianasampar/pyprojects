@@ -18,7 +18,6 @@ temperature=0.6
 database="agentic_database.db"
 database_table='agentic_interlocutor_events'
 
-
 # Functions ingest_metadata to store each interaction
 def ingest_metadata(json):
     connection = duckdb.connect(database)
@@ -64,9 +63,9 @@ def get_streamed_request(**params):
 
 
 def interaction(user_input, **params):
-    add_user_message(messages, user_input)
+    add_user_message(params["messages"], user_input)
     response = get_streamed_request(**params)
-    add_assistant_message(messages, response.content)
+    add_assistant_message(params["messages"], response.content)
     return response
 
 # Creating chat prompting interface and 
@@ -108,9 +107,6 @@ def chat(messages, system=None, tools=None):
 
         if response.stop_reason != 'tool_use':
             continue
-
-messages = []
-chat(messages=messages)
 
 # To run: 
 # get inside .claude folder 
