@@ -3,7 +3,7 @@ from anthropic.types import Message
 from dotenv import load_dotenv
 import duckdb
 import json
-from agents import utils
+from claude.agents import utils
 from .tools import datetime_tools as dt_tools
 from .tools import news_notification_tools as nt_tools
 
@@ -113,5 +113,5 @@ system = """ You are a news reporter. Your role is to create OS Notifications to
 chat(messages=messages, tools=tools_schemas, system=system)
 
 # To run locally: 
-# get inside .claude folder 
+# get inside claude folder 
 # and execute: python -m agents.news_notification_agent.interlocutor
