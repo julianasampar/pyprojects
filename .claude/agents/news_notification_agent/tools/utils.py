@@ -1,7 +1,7 @@
 # Defining a function to run the tool (based on the LLM answer) and return the result
 
 from tools.datetime_tools import get_current_datetime, add_duration_to_datetime
-from tools.reminder_tools import schedule_notification
+from tools.news_notification_tools import schedule_notification
 
 def run_tool(response):
     tool_results = []
