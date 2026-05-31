@@ -3,7 +3,7 @@ from anthropic.types import Message
 from dotenv import load_dotenv
 import duckdb
 import json
-from agents import utils
+from .. import utils
 from .tools import datetime_tools as dt_tools
 from .tools import news_notification_tools as nt_tools
 
@@ -17,6 +17,7 @@ max_tokens=1000
 temperature=0.6
 database="agentic_database.db"
 database_table='agentic_interlocutor_events'
+messages =[]
 
 # Defining tools to be called
 tools_functions = {
@@ -62,13 +63,13 @@ def get_streamed_request(**params):
 
 
 def interaction(user_input, **params):
-    add_user_message(messages, user_input)
+    add_user_message(params["messages"], user_input)
     response = get_streamed_request(**params)
-    add_assistant_message(messages, response.content)
+    add_assistant_message(params["messages"], response.content)
     return response
 
 # Creating chat prompting interface and 
-def chat(messages, system=None, tools=None, tools_functions=tools_functions):
+def chat(user_input, messages=messages, system=None, tools=tools_schemas, tools_functions=tools_functions):
     params = {
         "model": model,
         "max_tokens": max_tokens,
@@ -87,10 +88,6 @@ def chat(messages, system=None, tools=None, tools_functions=tools_functions):
     if tools: # tools = Python fuctions that the LLM might ask to execute to get external context
         params["tools"] = tools
 
-    user_input = """ Send me a Mac Notifications containg headline and content for one of the 
-                        latest news in the world and/or Brazil of the last 5 HOURS.
-                """
-    add_user_message(messages, user_input)
     response = interaction(user_input, **params)
 
     while response.stop_reason == 'tool_use': # If the LLM requires a tool call
@@ -101,16 +98,6 @@ def chat(messages, system=None, tools=None, tools_functions=tools_functions):
     if response.stop_reason != 'tool_use':
             exit
 
-messages = []
-system = """ You are a news reporter. Your role is to create OS Notifications to report the latest news.
-            Focus on the text. Don't include any HTML or XML tags.
-            The content must fit into the size (320 pixels x 340 pixels) of the MacOs notification banner.
-            One notification must report only one news.
-            Make sure to keep it concise and to format the text in a readable and appropriate way for Mac notifications.
-            Interests: Politics, Economics,  International Affairs.
-        """
-
-chat(messages=messages, tools=tools_schemas, system=system)
 
 # To run locally: 
 # get inside claude folder 
