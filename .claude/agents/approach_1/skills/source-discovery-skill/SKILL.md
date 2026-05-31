@@ -72,6 +72,8 @@ If a spec file path is provided, go directly to Mode 2.
       - unique: Number of distinct values.
       - top: The most frequent value (mode).
       - freq: How many times the 'top' value appears
+
+3. **Categorical Values**: For each table and for each non-key categorical columns only, retrieve the possible distinct values. 
    
 ### Step 2: Data Structure
 
@@ -79,7 +81,6 @@ If a spec file path is provided, go directly to Mode 2.
 
 2. **Foreign Keys**: For each table, identify the Foreign Keys. If the table doesn't have FKs, skip this step.
 
-3. **Categorical Values**: For each table and for each non-key categorical columns only, retrieve the possible distinct values. 
 
 3. **Orchestration**: For each table, identify the ETL update timestamp column, along with the scheduling strategy and refresh latency. If it is not possible to collect the information, skip this step. Some examples are: 
    > A source materialized as view
@@ -116,3 +117,5 @@ If a spec file path is provided, go directly to Mode 2.
 ### Step 5: Logging the Results
 1. **File Creation**: Create a file for each source under the provided storage path. If path not provided, write under the default path. The file name should be written as "<name_of_source>__<current_timestamp>".
    - Default Path: /Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/.claude/resources
+
+   
