@@ -3,7 +3,7 @@ from anthropic.types import Message
 from dotenv import load_dotenv
 import duckdb
 import json
-from claude.agents import utils
+from agents import utils
 from .tools import datetime_tools as dt_tools
 from .tools import news_notification_tools as nt_tools
 
@@ -114,4 +114,4 @@ chat(messages=messages, tools=tools_schemas, system=system)
 
 # To run locally: 
 # get inside claude folder 
-# and execute: python -m agents.news_notification_agent.interlocutor
+# and execute: python -m agents.news_notification_agent.notifier
