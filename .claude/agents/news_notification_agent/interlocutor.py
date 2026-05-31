@@ -82,7 +82,11 @@ def chat(messages, system=None, tools=None):
     
     # Adding optional arguments, if they are declated
     if system: # system = system message. An initial prompt to give the LLM context about how it should approach the interaction
-        params["system"] = system
+        params["system"] = [{
+            "type":"text",
+            "text": system,
+            "cache_control": {"type": "ephemeral"}
+        }]
 
     if tools: # tools = Python fuctions that the LLM might ask to execute to get external context
         params["tools"] = tools
@@ -108,5 +112,11 @@ def chat(messages, system=None, tools=None):
             continue
 
 messages = []
+system = """ Your role is to create a notification 10 seconds from now containing the TOP 3 
+                latest news from the day before.
+            Make sure to keep it concise and to format the text in a readable and 
+                appropriate way for Mac notifications.
+            Don't include the news in the answers. Only in the notifications.
+    """
 tool = [get_current_datetime__schema, add_duration_to_datetime__schema, schedule_notification__schema, web_search__schema]
-chat(messages=messages, tools=tool)
+chat(messages=messages, tools=tool, system=system)
