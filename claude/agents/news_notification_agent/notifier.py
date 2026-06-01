@@ -3,37 +3,34 @@ from anthropic.types import Message
 from dotenv import load_dotenv
 import duckdb
 import json
-from tools import utils
-from tools.datetime_tools import get_current_datetime__schema, add_duration_to_datetime__schema
-from tools.news_notification_tools import schedule_notification__schema, web_search__schema
+from .. import utils
+from .tools import datetime_tools as dt_tools
+from .tools import news_notification_tools as nt_tools
 
 # Loading Anthropic API Key
 load_dotenv()
 
-# Create an API Client
-
-# Define parameters
+# Create an API Client and define parameters
 client = Anthropic()
 model = "claude-haiku-4-5"
 max_tokens=1000
 temperature=0.6
 database="agentic_database.db"
 database_table='agentic_interlocutor_events'
+messages =[]
 
-
-# Functions ingest_metadata to store each interaction
-def ingest_metadata(json):
-    connection = duckdb.connect(database)
-    connection.sql(f"""CREATE TABLE IF NOT EXISTS {database_table} ( 
-                        interaction_log JSON,
-                        inserted_at TIMESTAMP
-                    );
-                    """)
-    connection.execute(f"""INSERT INTO {database_table} VALUES 
-                        (?, CURRENT_TIMESTAMP);
-                        """, 
-                        [json]
-                    )
+# Defining tools to be called
+tools_functions = {
+    "get_current_datetime": dt_tools.get_current_datetime,
+    "add_duration_to_datetime": dt_tools.add_duration_to_datetime,
+    "schedule_notification": nt_tools.schedule_notification,
+}
+tools_schemas = [
+    dt_tools.get_current_datetime__schema,
+    dt_tools.add_duration_to_datetime__schema,
+    nt_tools.schedule_notification__schema,
+    nt_tools.web_search__schema
+]
 
 
 # Functions add_user_message and add_assistant_message to maintain context for conversations
@@ -42,14 +39,14 @@ def add_user_message(messages, text):
     messages.append(user_message)
     
     value_to_insert = json.dumps(user_message, default=str)
-    ingest_metadata(value_to_insert)
+    utils.ingest_metadata(value_to_insert, database=database, database_table=database_table)
 
 def add_assistant_message(messages, text):
     assistant_message = {"role": "assistant", "content": text if isinstance(text, Message) else text}
     messages.append(assistant_message)
     
     value_to_insert = json.dumps(assistant_message, default=str)
-    ingest_metadata(value_to_insert)
+    utils.ingest_metadata(value_to_insert, database=database, database_table=database_table)
 
 
 # Creating function to send request and stream the LLM's responses
@@ -66,13 +63,13 @@ def get_streamed_request(**params):
 
 
 def interaction(user_input, **params):
-    add_user_message(messages, user_input)
+    add_user_message(params["messages"], user_input)
     response = get_streamed_request(**params)
-    add_assistant_message(messages, response.content)
+    add_assistant_message(params["messages"], response.content)
     return response
 
 # Creating chat prompting interface and 
-def chat(messages, system=None, tools=None):
+def chat(user_input, messages=messages, system=None, tools=tools_schemas, tools_functions=tools_functions):
     params = {
         "model": model,
         "max_tokens": max_tokens,
@@ -82,31 +79,26 @@ def chat(messages, system=None, tools=None):
     
     # Adding optional arguments, if they are declated
     if system: # system = system message. An initial prompt to give the LLM context about how it should approach the interaction
-        params["system"] = system
+        params["system"] = [{
+            "type":"text",
+            "text": system,
+            "cache_control": {"type": "ephemeral"}
+        }]
 
     if tools: # tools = Python fuctions that the LLM might ask to execute to get external context
         params["tools"] = tools
 
-    while True:
-        try: 
-            user_input = input("\nPrompt: ")
-            if user_input.lower() == 'exit':
-                break
-        except KeyboardInterrupt:
-            break
-        except EOFError:
-            break
-        
+    response = interaction(user_input, **params)
+
+    while response.stop_reason == 'tool_use': # If the LLM requires a tool call
+        tool_outputs = utils.run_tool(response, functions=tools_functions)
+        user_input = utils.get_tool_result_block(tool_outputs)
         response = interaction(user_input, **params)
 
-        while response.stop_reason == 'tool_use': # If the LLM requires a tool call
-            tool_outputs = utils.run_tool(response)
-            user_input = utils.get_tool_result_block(tool_outputs)
-            response = interaction(user_input, **params)
+    if response.stop_reason != 'tool_use':
+            exit
 
-        if response.stop_reason != 'tool_use':
-            continue
 
-messages = []
-tool = [get_current_datetime__schema, add_duration_to_datetime__schema, schedule_notification__schema, web_search__schema]
-chat(messages=messages, tools=tool)
+# To run locally: 
+# get inside claude folder 
+# and execute: python -m agents.news_notification_agent.notifier

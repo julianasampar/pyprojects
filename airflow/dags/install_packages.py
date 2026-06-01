@@ -21,6 +21,9 @@ with DAG(
             , 'pyarrow'
             , 'fastavro'
             , 'spotipy'
+            , 'anthropic'
+            , 'dotenv'
+            , 'duckdb'
     ]
         
     for package in packages:
