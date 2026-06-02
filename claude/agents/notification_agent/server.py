@@ -1,5 +1,4 @@
 # Import libraries
-import sys
 from anthropic import Anthropic
 from mcp.server.fastmcp import FastMCP
 
@@ -52,4 +51,4 @@ def notify_me_latest_news(interests: str) -> str:
     return prompt
 
 # HTTP (remote)
-#mcp.run(transport="http", host="0.0.0.0", port=8000)
+# mcp.run(transport="streamable-http")
