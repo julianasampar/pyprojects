@@ -37,7 +37,34 @@ mcp.add_tool(
 )
 
 mcp.add_tool(
-    news_notification_tools.schedule_notification,
+    notifier_tools.schedule_notification,
     name="schedule_notification",
     description="Schedule a desktop notification with title and content to appear after a specified delay."
 )
+
+from desktop_notifier import DesktopNotifier, DEFAULT_SOUND
+import asyncio
+
+title = "TIME FOR THE NEWS!!!!"
+
+content = "You were able to make this function work!!!"
+
+async def schedule_notification(title:str, content:str):
+    
+    notifier = DesktopNotifier()
+    
+    await notifier.send(
+            title=title,
+            message=content,
+            timeout=0.5,
+            sound=DEFAULT_SOUND,
+        )
+
+    return "Notification was successfully sent"
+
+
+import inspect 
+notification = asyncio.run(schedule_notification(title=title, content=content))
+notification
+print(schedule_notification)
+print(inspect.iscoroutinefunction(notification))
