@@ -6,7 +6,7 @@ from datetime import datetime
 from anthropic import Anthropic
 
 sys.path.append("/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects")
-from claude.agents.news_notification_agent import notifier
+from claude.agents.notification_agent import notifier
 
 client = Anthropic(
     api_key=os.getenv("ANTHROPIC_API_KEY")

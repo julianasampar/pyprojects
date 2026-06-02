@@ -1,11 +1,10 @@
 from anthropic import Anthropic
 from anthropic.types import Message
 from dotenv import load_dotenv
-import duckdb
 import json
 from .. import utils
 from .tools import datetime_tools as dt_tools
-from .tools import news_notification_tools as nt_tools
+from .tools import notifier_tools as nt_tools
 
 # Loading Anthropic API Key
 load_dotenv()
@@ -94,6 +93,7 @@ def chat(user_input, messages=messages, system=None, tools=tools_schemas, tools_
         tool_outputs = utils.run_tool(response, functions=tools_functions)
         user_input = utils.get_tool_result_block(tool_outputs)
         response = interaction(user_input, **params)
+        print(messages)
 
     if response.stop_reason != 'tool_use':
             exit
@@ -101,4 +101,4 @@ def chat(user_input, messages=messages, system=None, tools=tools_schemas, tools_
 
 # To run locally: 
 # get inside claude folder 
-# and execute: python -m agents.news_notification_agent.notifier
+# and execute: python -m agents.notification_agent.notifier
