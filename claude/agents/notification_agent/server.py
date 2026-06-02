@@ -1,29 +1,15 @@
 # Import libraries
-
 import sys
 from anthropic import Anthropic
 from mcp.server.fastmcp import FastMCP
-from mcp.types import ToolAnnotations
-from typing import Annotated
-from pydantic import Field
-from dotenv import load_dotenv
 
-# Loading Anthropic API Key
-load_dotenv()
+# Getting notification tools
+from tools import datetime_tools, notifier_tools
 
-# Getting chatbot_agent
-sys.path.append("/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/claude")
-from agents.notification_agent.tools import datetime_tools, notifier_tools
-
-# Create an API Client
-client = Anthropic()
-
-# Defining parameters
-model = "claude-haiku-4-5"
-max_tokens=1000
-
+# Create an MCP
 mcp = FastMCP("system_notifier", log_level="ERROR")
 
+# Adding the already defined tools to the MCP
 mcp.add_tool(
     datetime_tools.get_current_datetime,
     name="get_current_datetime",
@@ -42,29 +28,28 @@ mcp.add_tool(
     description="Schedule a desktop notification with title and content to appear after a specified delay."
 )
 
-from desktop_notifier import DesktopNotifier, DEFAULT_SOUND
-import asyncio
+@mcp.prompt()
+def notify_me_latest_news(interests: str) -> str:
+    """Generates a news reporter prompt focused on the user's interests."""
+    prompt = f"""
+        <role> 
+        You are a news reporter. Your role is to create OS Notifications to report the latest news.
+        Extract away any HTML or XML tags within the text. Report only the text itself.
+        The content must fit into the size (320 pixels x 340 pixels) banner.
+        One notification must report only one news.
+        Set notification title as being: "TIME FOR YOUR NEWS!!!!"
+        Focus on news about: {interests}
+        </role>
+        <example>
+        TIME FOR YOUR NEWS!!!
+        IRAN-ISRAEL CONFLICT ESCALATES
+        Iran suspends peace talks with US and threatens to open "other fronts" 
+        in the war. Israel intercepts projectiles from Lebanon as tensions spike
+        over ceasefire violations. Trump claims talk continues at a "rapid pace"
+        despite continuous Iranian threats.
+        </example>
+    """
+    return prompt
 
-title = "TIME FOR THE NEWS!!!!"
-
-content = "You were able to make this function work!!!"
-
-async def schedule_notification(title:str, content:str):
-    
-    notifier = DesktopNotifier()
-    
-    await notifier.send(
-            title=title,
-            message=content,
-            timeout=0.5,
-            sound=DEFAULT_SOUND,
-        )
-
-    return "Notification was successfully sent"
-
-
-import inspect 
-notification = asyncio.run(schedule_notification(title=title, content=content))
-notification
-print(schedule_notification)
-print(inspect.iscoroutinefunction(notification))
+# HTTP (remote)
+#mcp.run(transport="http", host="0.0.0.0", port=8000)

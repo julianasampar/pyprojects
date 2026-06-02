@@ -2,9 +2,13 @@ import asyncio
 from anthropic.types import ToolParam
 from desktop_notifier import DesktopNotifier, DEFAULT_SOUND
 
-async def schedule_notification(title:str, content:str):
+async def schedule_notification(title:str, content:str, delay_seconds=0):
+
+    delay_seconds = int(delay_seconds)
     
     notifier = DesktopNotifier()
+
+    await asyncio.sleep(delay_seconds)
     
     await notifier.send(
             title=title,
@@ -29,6 +33,10 @@ schedule_notification__schema = ToolParam({
             "content": {
                 "type": "string",
                 "description": "Content to be included in the notification body "
+            },
+            "delay_seconds": {
+                "type": "number",
+                "description": "Number of seconds to wait before sending the notification"
             },
         },
         "required": ["title", "content"]
