@@ -3,8 +3,7 @@ from anthropic.types import Message
 from dotenv import load_dotenv
 import json
 from .. import utils
-from .tools import datetime_tools as dt_tools
-from .tools import notifier_tools as nt_tools
+from .tools import notifier_tools
 
 # Loading Anthropic API Key
 load_dotenv()
@@ -20,15 +19,15 @@ messages =[]
 
 # Defining tools to be called
 tools_functions = {
-    "get_current_datetime": dt_tools.get_current_datetime,
-    "add_duration_to_datetime": dt_tools.add_duration_to_datetime,
-    "schedule_notification": nt_tools.schedule_notification,
+    "get_current_datetime": notifier_tools.get_current_datetime,
+    "add_duration_to_datetime": notifier_tools.add_duration_to_datetime,
+    "schedule_notification": notifier_tools.schedule_notification,
 }
 tools_schemas = [
-    dt_tools.get_current_datetime__schema,
-    dt_tools.add_duration_to_datetime__schema,
-    nt_tools.schedule_notification__schema,
-    nt_tools.web_search__schema
+    notifier_tools.get_current_datetime__schema,
+    notifier_tools.add_duration_to_datetime__schema,
+    notifier_tools.schedule_notification__schema,
+    notifier_tools.web_search__schema
 ]
 
 
@@ -93,7 +92,6 @@ def chat(user_input, messages=messages, system=None, tools=tools_schemas, tools_
         tool_outputs = utils.run_tool(response, functions=tools_functions)
         user_input = utils.get_tool_result_block(tool_outputs)
         response = interaction(user_input, **params)
-        print(messages)
 
     if response.stop_reason != 'tool_use':
             exit
