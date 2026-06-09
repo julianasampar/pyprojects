@@ -51,6 +51,31 @@ class DataSource(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_table_ref(self, table_name: str) -> str:
+        """
+        Returns the SQL FROM clause reference for this source.
+        DuckDB:   "read_csv_auto('./data/rental.csv')"
+        Snowflake: "ANALYTICS.DVD_RENTALS.RENTAL"
+        """
+        pass
+
+    @abstractmethod
+    def get_percentile_sql(self, col: str, percentile: float) -> str:
+        """
+        Returns the SQL expression for a percentile calculation.
+        DuckDB:    QUANTILE_CONT("col", 0.25)
+        Snowflake: PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY "col")
+        """
+        pass
+
+    @abstractmethod
+    def execute_query(self, query: str) -> str:
+        """
+        Executes the SQL query inside the proper database.
+        """
+        pass
+
 
 #######################################
 #       CSV IMPLEMENTATION            #
@@ -134,6 +159,16 @@ class CSVDataSource(DataSource):
             }
             for row in rows
         ]
+    
+    def get_table_ref(self, table_name: str) -> str:
+        path = self.folder_path / f"{table_name}.csv"
+        return f"read_csv_auto('{path}')"
+    
+    def get_percentile_sql(self, col: str, percentile: float) -> str:
+        return f'QUANTILE_CONT("{col}", {percentile})'
+    
+    def execute_query(self, query: str):
+        return self.conn.execute(query)
 
 #######################################
 #   SNOWFLAKE IMPLEMENTATION          #
@@ -142,7 +177,7 @@ class CSVDataSource(DataSource):
 
 class SnowflakeDataSource(DataSource):
     def __init__(self):
-        con = snowflake.connector.connect(
+        self.conn = snowflake.connector.connect(
             user=os.getenv('SNOWFLAKE_USER'),
             password=os.getenv('SNOWFLAKE_PASSWORD'),
             account=os.getenv('SNOWFLAKE_ACCOUNT'),
@@ -159,7 +194,7 @@ class SnowflakeDataSource(DataSource):
     def list_tables(self) -> list[str]:
         cursor = self.conn.cursor()
         cursor.execute(f"SHOW TABLES IN SCHEMA {self.database}.{self.schema}")
-        return [row[1] for row in cursor.fetchall()] 
+        return [row[1] for row in cursor.fetchall()]
     
     #def read_table(self, table_name: str, sample_size: int = 10_000):
     #    cursor = self.conn.cursor()
@@ -182,11 +217,26 @@ class SnowflakeDataSource(DataSource):
             for row in cursor.fetchall()
         ]
     
+    def get_table_ref(self, table_name: str) -> str:
+        return f"{self.database}.{self.schema}.{table_name.upper()}"
+    
+    def get_percentile_sql(self, col: str, percentile: float) -> str:
+        return f'PERCENTILE_CONT({percentile}) WITHIN GROUP (ORDER BY "{col}")'
+    
+    def execute_query(self, query: str):
+        """
+        Unified execute method so the profiler doesn't care
+        whether it's talking to DuckDB or Snowflake.
+        """
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        return cursor
+    
     
 ############################################
 #               DEFAULT TOOL              #
 ############################################
-# This function gets the right source by name.
+# This function gets the right connection by declaring the source_type
 
 def get_datasource(source_type: str, **kwargs) -> DataSource:
     """
@@ -209,3 +259,7 @@ def get_datasource(source_type: str, **kwargs) -> DataSource:
 
     return sources[source_type](**kwargs)
 
+# To call: 
+#source = get_datasource('snowflake')
+#source = get_datasource('csv', folder_path='/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store')
+#print(source.get_schema('PART'))

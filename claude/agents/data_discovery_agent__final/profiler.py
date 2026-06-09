@@ -8,44 +8,37 @@ Returns a structured dict that the orchestrator will later pass to the LLM.
 """
 
 import duckdb
-from reader import DataSource
+from reader import DataSource, get_datasource
 
 
-# ─────────────────────────────────────────────────────────────
-# COLUMN TYPE CLASSIFICATION
-# ─────────────────────────────────────────────────────────────
-# DuckDB returns type names like "INTEGER", "VARCHAR", "DOUBLE", etc.
-# We group them into two buckets: numeric or categorical.
-
+# Setting numeric and date types
 NUMERIC_TYPES = {
     "TINYINT", "SMALLINT", "INTEGER", "BIGINT", "HUGEINT",
     "FLOAT", "DOUBLE", "DECIMAL", "NUMERIC",
-    "REAL", "INT", "INT2", "INT4", "INT8",
+    "REAL", "INT", "INT2", "INT4", "INT8", "BYTEINT",
+    "NUMBER",  "FLOAT4", "FLOAT8", "DOUBLE PRECISION"
 }
 
 DATE_TYPES = {
-    "DATE", "TIMESTAMP", "TIMESTAMPTZ",
+    "DATE", "TIMESTAMP", "TIMESTAMPTZ", "TIMESTAMP_NTZ",
     "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITHOUT TIME ZONE",
-    "TIME", "TIMETZ",
+    "TIME", "TIMETZ", "TIMESTAMP_LTZ", "TIMESTAMP_TZ",
+    "DATETIME"
 }
 
-def _is_numeric(col_type: str) -> bool:
+def is_numeric(col_type: str) -> bool:
     """Returns True if the DuckDB column type is numeric."""
     # Normalize to uppercase and strip precision info (e.g. "DECIMAL(10,2)" → "DECIMAL")
     base_type = col_type.upper().split("(")[0].strip()
     return base_type in NUMERIC_TYPES
 
-def _is_date(col_type: str) -> bool:
+def is_date(col_type: str) -> bool:
     """Returns True if the DuckDB column type is date or timestamp."""
     base_type = col_type.upper().split("(")[0].strip()
     return base_type in DATE_TYPES
 
 
-# ─────────────────────────────────────────────────────────────
-# NUMERIC METRICS QUERY
-# ─────────────────────────────────────────────────────────────
-
-def _profile_numeric_column(conn: duckdb.DuckDBPyConnection, table_ref: str, col: str) -> dict:
+def profile_numeric_column(table_ref: str, col: str, source: DataSource) -> dict:
     """
     Runs a single SQL query to compute all numeric metrics for one column.
 
@@ -53,33 +46,30 @@ def _profile_numeric_column(conn: duckdb.DuckDBPyConnection, table_ref: str, col
         conn      : the active DuckDB connection
         table_ref : SQL reference to the table (e.g. "read_csv_auto('path/to/file.csv')")
         col       : column name to profile
+        source    : the variable to access the class depending on the source type (e. g. source = get_datasource('snowflake'))
     """
     # We wrap the column name in double quotes to handle names with spaces or special chars
     query = f"""
         SELECT
-            COUNT("{col}")                                      AS count,
-            AVG("{col}")                                        AS mean,
-            STDDEV("{col}")                                     AS std,
-            MIN("{col}")                                        AS min,
-            QUANTILE_CONT("{col}", 0.25)                       AS "25%",
-            QUANTILE_CONT("{col}", 0.50)                       AS "50%",
-            QUANTILE_CONT("{col}", 0.75)                       AS "75%",
-            MAX("{col}")                                        AS max
+            COUNT("{col}")                              AS count,
+            AVG("{col}")                                AS mean,
+            STDDEV("{col}")                             AS std,
+            MIN("{col}")                                AS min,
+            {source.get_percentile_sql(col, 0.25)}     AS "25%",
+            {source.get_percentile_sql(col, 0.50)}      AS "50%",
+            {source.get_percentile_sql(col, 0.75)}     AS "75%",
+            MAX("{col}")                                AS max
         FROM {table_ref}
     """
 
-    row = conn.execute(query).fetchone()
+    row = source.execute_query(query).fetchone()
 
     # fetchone() returns a tuple — we zip it with the column names to make a dict
     keys = ["count", "mean", "std", "min", "25%", "50%", "75%", "max"]
     return dict(zip(keys, row))
 
 
-# ─────────────────────────────────────────────────────────────
-# CATEGORICAL METRICS QUERY
-# ─────────────────────────────────────────────────────────────
-
-def _profile_categorical_column(conn: duckdb.DuckDBPyConnection, table_ref: str, col: str) -> dict:
+def profile_categorical_column(table_ref: str, col: str, source: DataSource) -> dict:
     """
     Runs SQL queries to compute all categorical metrics for one column.
 
@@ -92,10 +82,10 @@ def _profile_categorical_column(conn: duckdb.DuckDBPyConnection, table_ref: str,
     base_query = f"""
         SELECT
             COUNT("{col}")              AS count,
-            COUNT(DISTINCT "{col}")     AS unique
+            COUNT(DISTINCT "{col}")     AS count_unique
         FROM {table_ref}
     """
-    base_row = conn.execute(base_query).fetchone()
+    base_row = source.execute_query(base_query).fetchone()
 
     # Query 2: top value and its frequency
     # We order by frequency descending and take the first row
@@ -109,7 +99,7 @@ def _profile_categorical_column(conn: duckdb.DuckDBPyConnection, table_ref: str,
         ORDER BY freq DESC
         LIMIT 1
     """
-    top_row = conn.execute(top_query).fetchone()
+    top_row = source.execute_query(top_query).fetchone()
 
     # top_row could be None if the column is entirely null
     top_val  = top_row[0] if top_row else None
@@ -123,16 +113,7 @@ def _profile_categorical_column(conn: duckdb.DuckDBPyConnection, table_ref: str,
     }
 
 
-# ─────────────────────────────────────────────────────────────
-# DISTINCT VALUES
-# ─────────────────────────────────────────────────────────────
-
-def _get_distinct_values(
-    conn: duckdb.DuckDBPyConnection,
-    table_ref: str,
-    col: str,
-    threshold: int = 25,
-) -> dict:
+def get_distinct_values(table_ref: str, col: str, source: DataSource, threshold: int = 25) -> dict:
     """
     Returns the distinct values of a column, ordered by frequency descending.
     If the number of distinct values exceeds `threshold`, returns None instead
@@ -155,7 +136,7 @@ def _get_distinct_values(
     """
     # Step 1: check how many distinct values exist BEFORE fetching them all
     # This avoids pulling thousands of rows just to decide to skip the column
-    count_row = conn.execute(f"""
+    count_row = source.execute_query(f"""
         SELECT COUNT(DISTINCT "{col}") FROM {table_ref}
     """).fetchone()
 
@@ -171,7 +152,7 @@ def _get_distinct_values(
 
     # Step 3: fetch actual values ordered by frequency (most common first)
     # NULL values are excluded — their presence is already captured in metrics
-    rows = conn.execute(f"""
+    rows = source.execute_query(f"""
         SELECT "{col}"
         FROM {table_ref}
         WHERE "{col}" IS NOT NULL
@@ -189,18 +170,7 @@ def _get_distinct_values(
         "skipped":        False,
     }
 
-
-
-# ─────────────────────────────────────────────────────────────
-# LATEST DATE VALUES
-# ─────────────────────────────────────────────────────────────
-
-def _get_latest_date_values(
-    conn: "duckdb.DuckDBPyConnection",
-    table_ref: str,
-    col: str,
-    limit: int = 10,
-) -> list:
+def get_latest_date_values(table_ref: str, col: str, source: DataSource, limit: int = 10) -> list:
     """
     Returns the last `limit` non-null values of a date/timestamp column,
     ordered most-recent first. Nulls are excluded.
@@ -218,7 +188,7 @@ def _get_latest_date_values(
     Returns a list of ISO-formatted date strings, most recent first:
         ["2006-02-14", "2006-02-13", "2006-02-12", ...]
     """
-    rows = conn.execute(f"""
+    rows = source.execute_query(f"""
         SELECT DISTINCT "{col}"
         FROM {table_ref}
         WHERE "{col}" IS NOT NULL
@@ -230,9 +200,9 @@ def _get_latest_date_values(
     return [str(row[0]) for row in rows]
 
 
-# ─────────────────────────────────────────────────────────────
-# MAIN PROFILING FUNCTION
-# ─────────────────────────────────────────────────────────────
+############################################
+#               DEFAULT TOOL              #
+############################################
 
 def profile_table(source: DataSource, table_name: str, distinct_threshold: int = 25) -> dict:
     """
@@ -248,14 +218,10 @@ def profile_table(source: DataSource, table_name: str, distinct_threshold: int =
                              Tune down for wide/large tables, up for small lookup tables.
     """
     schema = source.get_schema(table_name)
-    conn   = source.conn
+    table_ref = source.get_table_ref(table_name)
 
-    # Build the SQL table reference DuckDB will use in FROM clauses
-    # For CSV: "read_csv_auto('/path/to/rental.csv')"
-    table_ref = _build_table_ref(source, table_name)
-
-    # Get total row count (includes nulls — this is the full table size)
-    row_count = conn.execute(f"SELECT COUNT(*) FROM {table_ref}").fetchone()[0]
+    # Get total row count (includes nulls — this is the full table size)v
+    row_count = source.execute_query(f"SELECT COUNT(*) FROM {table_ref}").fetchone()[0]
 
     columns_profile = {}
 
@@ -263,20 +229,20 @@ def profile_table(source: DataSource, table_name: str, distinct_threshold: int =
         col_name = col_def["name"]
         col_type = col_def["type"]
 
-        if _is_numeric(col_type):
-            metrics = _profile_numeric_column(conn, table_ref, col_name)
+        if is_numeric(col_type):
+            metrics = profile_numeric_column(table_ref, col_name, source)
             col_kind = "numeric"
         else:
-            metrics = _profile_categorical_column(conn, table_ref, col_name)
+            metrics = profile_categorical_column(table_ref, col_name, source)
             col_kind = "categorical"
 
-        distinct = _get_distinct_values(conn, table_ref, col_name, threshold=distinct_threshold)
+        distinct = get_distinct_values(table_ref, col_name, source, threshold=distinct_threshold)
 
         # For date columns, fetch the last 10 values so the LLM can reason about
         # data freshness, temporal range, and activity patterns
         latest_dates = None
-        if _is_date(col_type):
-            latest_dates = _get_latest_date_values(conn, table_ref, col_name)
+        if is_date(col_type):
+            latest_dates = get_latest_date_values(table_ref, col_name, source)
 
         columns_profile[col_name] = {
             "type":         col_kind,
@@ -320,21 +286,6 @@ def profile_all_tables(source: DataSource, distinct_threshold: int = 25) -> dict
 
     return results
 
-
-# ─────────────────────────────────────────────────────────────
-# INTERNAL HELPER
-# ─────────────────────────────────────────────────────────────
-
-def _build_table_ref(source: DataSource, table_name: str) -> str:
-    """
-    Builds the SQL FROM clause reference for a given source type.
-    Currently handles CSV. Extend this when adding new source types.
-    """
-    from reader import CSVDataSource
-
-    if isinstance(source, CSVDataSource):
-        path = source.folder_path / f"{table_name}.csv"
-        return f"read_csv_auto('{path}')"
-
-    # Future: BigQueryDataSource, SnowflakeDataSource, etc.
-    raise NotImplementedError(f"No table_ref builder for source type: {type(source).__name__}")
+#source = get_datasource('snowflake')
+#source = get_datasource('csv', folder_path='/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store')
+#results = profile_all_tables(source)
