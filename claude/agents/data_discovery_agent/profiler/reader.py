@@ -6,9 +6,14 @@ It does NOT profile, describe, or call any LLM.
 Its only job: connect to a data source and return data/schema.
 """
 
+import os
+from dotenv import load_dotenv
 import duckdb
 from pathlib import Path
 from abc import ABC, abstractmethod
+import snowflake.connector
+
+load_dotenv()
 
 class DataSource(ABC):
 
@@ -20,17 +25,17 @@ class DataSource(ABC):
         """
         pass
 
-    @abstractmethod
-    def read_table(self, table_name: str, sample_size: int = 10_000) -> "duckdb.DuckDBPyRelation":
-        """
-        Returns a DuckDB relation (lazy query) for the given table.
-        The data is NOT fully loaded into memory — DuckDB reads it on demand.
+    #@abstractmethod
+    #def read_table(self, table_name: str, sample_size: int = 10_000) -> "duckdb.DuckDBPyRelation":
+    #    """
+    #    Returns a DuckDB relation (lazy query) for the given table.
+    #    The data is NOT fully loaded into memory — DuckDB reads it on demand.
 
-        Parameters:
-            table_name  : the name of the table to read
-            sample_size : max number of rows to sample (default: 10,000)
-        """
-        pass
+    #    Parameters:
+    #        table_name  : the name of the table to read
+    #        sample_size : max number of rows to sample (default: 10,000)
+    #    """
+    #    pass
 
     @abstractmethod
     def get_schema(self, table_name: str) -> list[dict]:
@@ -47,11 +52,10 @@ class DataSource(ABC):
         pass
 
 
-# ─────────────────────────────────────────────────────────────
-# CSV IMPLEMENTATION
-# ─────────────────────────────────────────────────────────────
+#######################################
+#       CSV IMPLEMENTATION            #
+#######################################
 # This is the concrete implementation for a folder of CSV files.
-# It fulfills the DataSource contract for local CSV files.
 
 class CSVDataSource(DataSource):
 
@@ -68,7 +72,7 @@ class CSVDataSource(DataSource):
 
         # One shared DuckDB connection for all queries in this source
         # duckdb.connect() without arguments = in-memory database
-        self.conn = duckdb.connect()
+        self.conn = duckdb.connect('discovery_agent_database.db')
 
         # Validate that the folder actually exists
         if not self.folder_path.exists():
@@ -83,28 +87,28 @@ class CSVDataSource(DataSource):
         # .stem gives us the filename without the extension
         return [f.stem for f in self.folder_path.glob("*.csv")]
 
-    def read_table(self, table_name: str, sample_size: int = 10_000) -> "duckdb.DuckDBPyRelation":
-        """
-        Reads a CSV file using DuckDB and returns a sampled relation.
+    # def read_table(self, table_name: str, sample_size: int = 10_000) -> "duckdb.DuckDBPyRelation":
+    #   """
+    #    Reads a CSV file using DuckDB and returns a sampled relation.
 
-        - read_csv_auto() detects column types automatically
-        - USING SAMPLE limits rows BEFORE loading into memory (efficient)
-        - Returns a DuckDB relation, not a full dataframe
-          (call .df() on the result if you need a pandas dataframe)
-        """
-        path = self.folder_path / f"{table_name}.csv"
+    #    - read_csv_auto() detects column types automatically
+    #    - USING SAMPLE limits rows BEFORE loading into memory (efficient)
+    #    - Returns a DuckDB relation, not a full dataframe
+    #      (call .df() on the result if you need a pandas dataframe)
+    #    """
+    #    path = self.folder_path / f"{table_name}.csv"
 
-        if not path.exists():
-            raise FileNotFoundError(f"Table not found: {path}")
+    #    if not path.exists():
+    #        raise FileNotFoundError(f"Table not found: {path}")
 
         # The f-string builds the SQL query dynamically with the actual path and sample size
-        query = f"""
-            SELECT *
-            FROM read_csv_auto('{path}')
-            USING SAMPLE {sample_size} ROWS
-        """
+    #    query = f"""
+    #        SELECT *
+    #        FROM read_csv_auto('{path}')
+    #        USING SAMPLE {sample_size} ROWS
+    #    """
 
-        return self.conn.execute(query)
+    #    return self.conn.execute(query)
 
     def get_schema(self, table_name: str) -> list[dict]:
         """
@@ -130,14 +134,59 @@ class CSVDataSource(DataSource):
             }
             for row in rows
         ]
+
+#######################################
+#   SNOWFLAKE IMPLEMENTATION          #
+#######################################
+# This is the concrete implementation for data living in Snowflake DW.
+
+class SnowflakeDataSource(DataSource):
+    def __init__(self):
+        con = snowflake.connector.connect(
+            user=os.getenv('SNOWFLAKE_USER'),
+            password=os.getenv('SNOWFLAKE_PASSWORD'),
+            account=os.getenv('SNOWFLAKE_ACCOUNT'),
+            warehouse=os.getenv('SNOWFLAKE_WAREHOUSE'),
+            database=os.getenv('SNOWFLAKE_DATABASE'),
+            schema=os.getenv('SNOWFLAKE_SCHEMA'),
+            session_parameters={
+                'QUERY_TAG': 'DataDiscoveryAgent',
+            }
+        )
+        self.database=os.getenv('SNOWFLAKE_DATABASE')
+        self.schema=os.getenv('SNOWFLAKE_SCHEMA')
+
+    def list_tables(self) -> list[str]:
+        cursor = self.conn.cursor()
+        cursor.execute(f"SHOW TABLES IN SCHEMA {self.database}.{self.schema}")
+        return [row[1] for row in cursor.fetchall()] 
+    
+    #def read_table(self, table_name: str, sample_size: int = 10_000):
+    #    cursor = self.conn.cursor()
+    #    cursor.execute(f"""
+    #        SELECT * FROM {self.database}.{self.schema}.{table_name}
+    #        SAMPLE ({sample_size} ROWS)
+    #    """)
+    #    return cursor
+
+    def get_schema(self, table_name: str) -> list[dict]:
+        cursor = self.conn.cursor()
+        cursor.execute(f"""
+            SELECT column_name, data_type, is_nullable
+            FROM information_schema.columns
+            WHERE table_schema = '{self.schema}'
+              AND table_name   = '{table_name.upper()}'
+        """)
+        return [
+            {"name": row[0], "type": row[1], "nullable": row[2] == "YES"}
+            for row in cursor.fetchall()
+        ]
     
     
-# ─────────────────────────────────────────────────────────────
-# DEFAULT FUNCTION (optional but useful)
-# ─────────────────────────────────────────────────────────────
-# Instead of importing CSVDataSource directly everywhere,
-# you can use this function to get the right source by name.
-# Later you'll add "bigquery", "snowflake", etc. here.
+############################################
+#               DEFAULT TOOL              #
+############################################
+# This function gets the right source by name.
 
 def get_datasource(source_type: str, **kwargs) -> DataSource:
     """
@@ -152,13 +201,11 @@ def get_datasource(source_type: str, **kwargs) -> DataSource:
     """
     sources = {
         "csv": CSVDataSource,
-        # "bigquery":  BigQueryDataSource,   ← add later
-        # "snowflake": SnowflakeDataSource,  ← add later
+        "snowflake": SnowflakeDataSource,
     }
 
     if source_type not in sources:
         raise ValueError(f"Unknown source type '{source_type}'. Available: {list(sources.keys())}")
 
     return sources[source_type](**kwargs)
-
 
