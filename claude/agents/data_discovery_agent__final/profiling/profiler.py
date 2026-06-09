@@ -7,7 +7,7 @@ Uses DuckDB SQL — no LLM involved. Pure deterministic computation.
 Returns a structured dict that the orchestrator will later pass to the LLM.
 """
 
-from profiling.reader import DataSource
+from utils.reader import DataSource
 
 
 # Setting numeric and date types

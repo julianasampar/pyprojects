@@ -1,6 +1,6 @@
-from profiling.reader import get_datasource
+from utils.reader import get_datasource
 from profiling.profiler import profile_all_tables
-from profiling.writer import get_storage
+from utils.writer import get_storage
 
 from anthropic import Anthropic
 from mcp.server.fastmcp import FastMCP
