@@ -7,8 +7,7 @@ Uses DuckDB SQL — no LLM involved. Pure deterministic computation.
 Returns a structured dict that the orchestrator will later pass to the LLM.
 """
 
-import duckdb
-from reader import DataSource, get_datasource
+from profiling.reader import DataSource
 
 
 # Setting numeric and date types
@@ -201,7 +200,7 @@ def get_latest_date_values(table_ref: str, col: str, source: DataSource, limit: 
 
 
 ############################################
-#               DEFAULT TOOL              #
+#               DEFAULT TOOLS              #
 ############################################
 
 def profile_table(source: DataSource, table_name: str, distinct_threshold: int = 25) -> dict:
@@ -285,7 +284,3 @@ def profile_all_tables(source: DataSource, distinct_threshold: int = 25) -> dict
         print(f"  Done: {table_name} — {results[table_name]['row_count']} rows")
 
     return results
-
-#source = get_datasource('snowflake')
-#source = get_datasource('csv', folder_path='/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store')
-#results = profile_all_tables(source)

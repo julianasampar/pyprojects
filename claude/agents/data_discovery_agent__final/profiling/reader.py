@@ -6,12 +6,13 @@ It does NOT profile, describe, or call any LLM.
 Its only job: connect to a data source and return data/schema.
 """
 
+from abc import ABC, abstractmethod
+import duckdb
+import snowflake.connector
+
 import os
 from dotenv import load_dotenv
-import duckdb
 from pathlib import Path
-from abc import ABC, abstractmethod
-import snowflake.connector
 
 load_dotenv()
 
@@ -176,20 +177,20 @@ class CSVDataSource(DataSource):
 # This is the concrete implementation for data living in Snowflake DW.
 
 class SnowflakeDataSource(DataSource):
-    def __init__(self):
+    def __init__(self, database=os.getenv('SNOWFLAKE_DATABASE'), schema=os.getenv('SNOWFLAKE_SCHEMA')):
         self.conn = snowflake.connector.connect(
             user=os.getenv('SNOWFLAKE_USER'),
             password=os.getenv('SNOWFLAKE_PASSWORD'),
             account=os.getenv('SNOWFLAKE_ACCOUNT'),
             warehouse=os.getenv('SNOWFLAKE_WAREHOUSE'),
-            database=os.getenv('SNOWFLAKE_DATABASE'),
-            schema=os.getenv('SNOWFLAKE_SCHEMA'),
+            database=database,
+            schema=schema,
             session_parameters={
                 'QUERY_TAG': 'DataDiscoveryAgent',
             }
         )
-        self.database=os.getenv('SNOWFLAKE_DATABASE')
-        self.schema=os.getenv('SNOWFLAKE_SCHEMA')
+        self.database=database
+        self.schema=schema
 
     def list_tables(self) -> list[str]:
         cursor = self.conn.cursor()
