@@ -155,6 +155,9 @@ class AWSDataStorage(DataStorage):
         path_written = f"s3://{bucket}/{domain_folder}"
 
         return path_written
+    
+    def read_json_from_storage(self, directory=None) -> dict:
+        raise ValueError("THERE IS NO AWS READ CONNECTION YET!! HOLD ON TIGHT!!")
 
 
 def get_storage(storage_type: str, **kwargs) -> DataStorage:

@@ -26,17 +26,18 @@ class DataSource(ABC):
         """
         pass
 
-    #@abstractmethod
-    #def read_table(self, table_name: str, sample_size: int = 10_000) -> "duckdb.DuckDBPyRelation":
-    #    """
-    #    Returns a DuckDB relation (lazy query) for the given table.
-    #    The data is NOT fully loaded into memory — DuckDB reads it on demand.
+    @abstractmethod
+    def read_table(self, table_name: str, filter: dict = None, sample_size: int = 1000) -> "duckdb.DuckDBPyRelation":
+        """
+        Returns a DuckDB relation (lazy query) for the given table.
+        The data is NOT fully loaded into memory — DuckDB reads it on demand.
 
-    #    Parameters:
-    #        table_name  : the name of the table to read
-    #        sample_size : max number of rows to sample (default: 10,000)
-    #    """
-    #    pass
+        Parameters:
+            table_name  : the name of the table to read
+            filter      : Optional. Dict containing column name and value to filter.
+            sample_size : max number of rows to sample (default: 1,000)
+        """
+        pass
 
     @abstractmethod
     def get_schema(self, table_name: str) -> list[dict]:
@@ -85,7 +86,7 @@ class DataSource(ABC):
 
 class CSVDataSource(DataSource):
 
-    def __init__(self, folder_path: str):
+    def __init__(self, folder_path: str, **kwargs):
         """
         Sets up the data source pointing to a folder of CSV files.
 
@@ -113,28 +114,38 @@ class CSVDataSource(DataSource):
         # .stem gives us the filename without the extension
         return [f.stem for f in self.folder_path.glob("*.csv")]
 
-    # def read_table(self, table_name: str, sample_size: int = 10_000) -> "duckdb.DuckDBPyRelation":
-    #   """
-    #    Reads a CSV file using DuckDB and returns a sampled relation.
+    def read_table(self, table_name: str, filter: dict = None, sample_size: int = 1000) -> "duckdb.DuckDBPyRelation":
+        """
+            Reads a CSV file using DuckDB and returns a sampled relation.
 
-    #    - read_csv_auto() detects column types automatically
-    #    - USING SAMPLE limits rows BEFORE loading into memory (efficient)
-    #    - Returns a DuckDB relation, not a full dataframe
-    #      (call .df() on the result if you need a pandas dataframe)
-    #    """
-    #    path = self.folder_path / f"{table_name}.csv"
+            - read_csv_auto() detects column types automatically
+            - USING SAMPLE limits rows BEFORE loading into memory (efficient)
+            - Returns a DuckDB relation, not a full dataframe
+            - The filters dict should be declared like:
+                {"column": "<name_of_column>", "value_to_filer":"value_1"}
+            """
+        path = self.folder_path / f"{table_name}.csv"
+        
+        if not path.exists():
+                raise FileNotFoundError(f"Table not found: {path}")
+        
+        if not filter:
+            query = f"""
+                    SELECT *
+                    FROM read_csv_auto('{path}')
+                    USING SAMPLE {sample_size} ROWS
+            """
 
-    #    if not path.exists():
-    #        raise FileNotFoundError(f"Table not found: {path}")
+        else:
+            for column, value in filter.items():
+                query = f"""
+                    SELECT *
+                    FROM read_csv_auto('{path}')
+                    WHERE {column} = {value}
+                    USING SAMPLE {sample_size} ROWS
+                """
 
-        # The f-string builds the SQL query dynamically with the actual path and sample size
-    #    query = f"""
-    #        SELECT *
-    #        FROM read_csv_auto('{path}')
-    #        USING SAMPLE {sample_size} ROWS
-    #    """
-
-    #    return self.conn.execute(query)
+        return self.conn.execute(query)
 
     def get_schema(self, table_name: str) -> list[dict]:
         """
@@ -177,7 +188,12 @@ class CSVDataSource(DataSource):
 # This is the concrete implementation for data living in Snowflake DW.
 
 class SnowflakeDataSource(DataSource):
-    def __init__(self, database=os.getenv('SNOWFLAKE_DATABASE'), schema=os.getenv('SNOWFLAKE_SCHEMA')):
+    def __init__(
+            self, 
+            database=os.getenv('SNOWFLAKE_DATABASE'), 
+            schema=os.getenv('SNOWFLAKE_SCHEMA'),
+            **kwargs
+            ):
         self.conn = snowflake.connector.connect(
             user=os.getenv('SNOWFLAKE_USER'),
             password=os.getenv('SNOWFLAKE_PASSWORD'),
@@ -197,13 +213,25 @@ class SnowflakeDataSource(DataSource):
         cursor.execute(f"SHOW TABLES IN SCHEMA {self.database}.{self.schema}")
         return [row[1] for row in cursor.fetchall()]
     
-    #def read_table(self, table_name: str, sample_size: int = 10_000):
-    #    cursor = self.conn.cursor()
-    #    cursor.execute(f"""
-    #        SELECT * FROM {self.database}.{self.schema}.{table_name}
-    #        SAMPLE ({sample_size} ROWS)
-    #    """)
-    #    return cursor
+    def read_table(self, table_name: str, filter: dict = None, sample_size: int = 10_000):
+        cursor = self.conn.cursor()
+
+        if not filter:
+            cursor.execute(f"""
+                SELECT * 
+                FROM {self.database}.{self.schema}.{table_name}
+                SAMPLE ({sample_size} ROWS)
+            """)
+        
+        else:
+            for column, value in filter.items():
+                cursor.execute(f"""
+                    SELECT * 
+                    FROM {self.database}.{self.schema}.{table_name}
+                    WHERE {column} = {value}
+                    SAMPLE ({sample_size} ROWS)
+                """)
+        return cursor
 
     def get_schema(self, table_name: str) -> list[dict]:
         cursor = self.conn.cursor()

@@ -1,6 +1,6 @@
-from utils.reader import get_datasource
-from utils.writer import get_storage
-from profiling.profiler import profile_all_tables
+from claude.agents.data_discovery_agent__final.tools.utils.reader import get_datasource
+from claude.agents.data_discovery_agent__final.tools.utils.writer import get_storage
+from claude.agents.data_discovery_agent__final.profiling.profiler import profile_all_tables
 
 from anthropic import Anthropic
 from mcp.server.fastmcp import FastMCP

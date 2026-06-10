@@ -7,7 +7,7 @@ Uses DuckDB SQL — no LLM involved. Pure deterministic computation.
 Returns a structured dict that the orchestrator will later pass to the LLM.
 """
 
-from utils.reader import DataSource
+from claude.agents.data_discovery_agent__final.tools.utils.reader import DataSource
 
 
 # Setting numeric and date types
