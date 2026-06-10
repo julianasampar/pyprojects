@@ -35,6 +35,8 @@ class DataSource(ABC):
         Parameters:
             table_name  : the name of the table to read
             filter      : Optional. Dict containing column name and value to filter.
+                          If filter is provided, the JSON schema should contain the following structure:
+                             {"<name_of_datasource>": {"column": "<name_of_column>", "value_to_filer":"value_1"}}
             sample_size : max number of rows to sample (default: 1,000)
         """
         pass
