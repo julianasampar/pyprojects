@@ -220,19 +220,38 @@ class SnowflakeDataSource(DataSource):
 
         if not filter:
             cursor.execute(f"""
-                SELECT * 
+                SELECT *
                 FROM {self.database}.{self.schema}.{table_name}
-                SAMPLE ({sample_size} ROWS)
+                LIMIT {sample_size}
             """)
-        
+
         else:
-            for column, value in filter.items():
-                cursor.execute(f"""
-                    SELECT * 
-                    FROM {self.database}.{self.schema}.{table_name}
-                    WHERE {column} = {value}
-                    SAMPLE ({sample_size} ROWS)
-                """)
+            # Extract filter - handle nested structure {source_type: {column: ..., value_to_filter: ...}}
+            actual_filter = filter
+            if len(filter) == 1 and isinstance(next(iter(filter.values())), dict):
+                actual_filter = next(iter(filter.values()))
+
+            # Get column and value (note: field is "value_to_filter", not "value_to_filer")
+            column = actual_filter.get("column")
+            # Handle both spellings and check for None explicitly (not falsy!)
+            value = actual_filter.get("value_to_filter")
+            if value is None:
+                value = actual_filter.get("value_to_filer")
+
+            if column is None or value is None:
+                # Fallback: get first key-value pair
+                column, value = next(iter(actual_filter.items()))
+
+            # Convert column name to uppercase for Snowflake (case-sensitive when quoted)
+            column_upper = column.upper() if isinstance(column, str) else column
+
+            query = f"""
+                SELECT *
+                FROM {self.database}.{self.schema}.{table_name}
+                WHERE "{column_upper}" = '{value}'
+                LIMIT {sample_size}
+            """
+            cursor.execute(query)
         return cursor
 
     def get_schema(self, table_name: str) -> list[dict]:
