@@ -18,10 +18,14 @@ load_dotenv()
 class DataStorage(ABC):
 
     @abstractmethod
-    def write_json_to_storage(self, content: dict, folder: str) -> str:
+    def write_json_to_storage(self, content: dict, domain_folder: str) -> str:
         """
         Writes JSON files into the storage. If a file already exist, this function overwrites it.
         """
+        pass
+
+    @abstractmethod
+    def read_json_from_storage(self, directory: str) -> dict:
         pass
 
 
@@ -32,7 +36,7 @@ class LocalDataStorage(DataStorage):
     def __init__(self, folder_path):
         self.folder_path = Path(folder_path)
 
-    def write_json_to_storage(self, content: dict, folder: str = None) -> str:
+    def write_json_to_storage(self, content: dict, domain_folder: str = None) -> str:
         """
         Saves profiling results locally.
         One JSON file per table plus a manifest.json.
@@ -40,8 +44,8 @@ class LocalDataStorage(DataStorage):
 
         output_path = self.folder_path
 
-        if folder:
-            output_path = output_path / folder
+        if domain_folder:
+            output_path = output_path / domain_folder
 
         output_path.mkdir(parents=True, exist_ok=True)
 
@@ -77,7 +81,29 @@ class LocalDataStorage(DataStorage):
 
         print(f"Manifest written: {manifest_path}")
 
-        return str(output_path)
+        path_written = str(output_path)
+        return path_written
+    
+
+    def read_json_from_storage(self, directory: str) -> dict:
+        """
+        Reads a directory containing JSON profiling files.
+        """
+
+        directory = Path(directory)
+        
+        results = {}
+
+        for file in directory.glob("*.json"):
+
+            if file.name == "manifest.json":
+                continue
+
+            with open(file, "r", encoding="utf-8") as f:
+                results[file.stem] = json.load(f)
+
+        return results
+        
 
 
 ############################################
@@ -92,7 +118,7 @@ class AWSDataStorage(DataStorage):
             region_name=os.getenv("AWS_REGION"),
         )
 
-    def write_json_to_storage(self, content: dict, folder: str, bucket: str = os.getenv("S3_BUCKET_NAME")) -> str:
+    def write_json_to_storage(self, content: dict, domain_folder: str, bucket: str = os.getenv("S3_BUCKET_NAME")) -> str:
         """
         Saves profiling results to S3. One JSON file per table.
 
@@ -104,7 +130,7 @@ class AWSDataStorage(DataStorage):
         s3 = self.s3
 
         for table_name, table_profile in content.items():
-            key     = f"{folder}/{table_name}.json"
+            key     = f"{domain_folder}/{table_name}.json"
             json_content = json.dumps(table_profile, indent=2, default=str)
 
             s3.put_object(Bucket=bucket, Key=key, Body=json_content.encode("utf-8"))
@@ -121,10 +147,14 @@ class AWSDataStorage(DataStorage):
         }
         s3.put_object(
             Bucket=bucket,
-            Key=f"{folder}/manifest.json",
+            Key=f"{domain_folder}/manifest.json",
             Body=json.dumps(manifest, indent=2).encode("utf-8"),
         )
-        print(f"  Manifest written: s3://{bucket}/{folder}/manifest.json")
+        print(f"  Manifest written: s3://{bucket}/{domain_folder}/manifest.json")
+
+        path_written = f"s3://{bucket}/{domain_folder}"
+
+        return path_written
 
 
 def get_storage(storage_type: str, **kwargs) -> DataStorage:

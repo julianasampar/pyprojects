@@ -1,6 +1,6 @@
 from utils.reader import get_datasource
-from profiling.profiler import profile_all_tables
 from utils.writer import get_storage
+from profiling.profiler import profile_all_tables
 
 from anthropic import Anthropic
 from mcp.server.fastmcp import FastMCP
@@ -85,5 +85,3 @@ async def profile_data(
     loop   = asyncio.get_event_loop()
     result = await loop.run_in_executor(executor, run_profiling)
     return result
-
-

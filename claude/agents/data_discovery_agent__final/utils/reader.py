@@ -259,8 +259,3 @@ def get_datasource(source_type: str, **kwargs) -> DataSource:
         raise ValueError(f"Unknown source type '{source_type}'. Available: {list(sources.keys())}")
 
     return sources[source_type](**kwargs)
-
-# To call: 
-#source = get_datasource('snowflake')
-#source = get_datasource('csv', folder_path='/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store')
-#print(source.get_schema('PART'))
