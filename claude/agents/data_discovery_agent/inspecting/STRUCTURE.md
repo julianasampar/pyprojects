@@ -1,5 +1,5 @@
 ---
-name: inspector
+name: inspecting
 description: "Read JSON files to explore data sources and grasp their underlying architectural structure."
 argument-hint: "[--json-storage-path] [--source-domain]"
 metadata:

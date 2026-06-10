@@ -17,7 +17,6 @@ with DAG(
             , 'google.cloud'
             , 'google.cloud.bigquery'
             , 'google.cloud.storage'
-            , 'json'
             , 'pyarrow'
             , 'fastavro'
             , 'spotipy'

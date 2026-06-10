@@ -1,4 +1,6 @@
 import duckdb
+import inspect
+import asyncio
 
 ##############################################
             ## TOOL FUNCTIONS ##
@@ -15,9 +17,14 @@ def run_tool(response, functions):
         id = tool.id
         function = functions[tool_name]
 
+        if inspect.iscoroutinefunction(function): 
+            response = asyncio.run(function(**params)) 
+        else: 
+            response = function(**params)
+
         result = {
             "id": id,
-            "response": function(**params)
+            "response": response
         }
 
         tool_results.append(result)

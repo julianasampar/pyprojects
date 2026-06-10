@@ -1,11 +1,9 @@
 from anthropic import Anthropic
 from anthropic.types import Message
 from dotenv import load_dotenv
-import duckdb
 import json
 from .. import utils
-from .tools import datetime_tools as dt_tools
-from .tools import news_notification_tools as nt_tools
+from .tools import notifier_tools
 
 # Loading Anthropic API Key
 load_dotenv()
@@ -21,15 +19,15 @@ messages =[]
 
 # Defining tools to be called
 tools_functions = {
-    "get_current_datetime": dt_tools.get_current_datetime,
-    "add_duration_to_datetime": dt_tools.add_duration_to_datetime,
-    "schedule_notification": nt_tools.schedule_notification,
+    "get_current_datetime": notifier_tools.get_current_datetime,
+    "add_duration_to_datetime": notifier_tools.add_duration_to_datetime,
+    "schedule_notification": notifier_tools.schedule_notification,
 }
 tools_schemas = [
-    dt_tools.get_current_datetime__schema,
-    dt_tools.add_duration_to_datetime__schema,
-    nt_tools.schedule_notification__schema,
-    nt_tools.web_search__schema
+    notifier_tools.get_current_datetime__schema,
+    notifier_tools.add_duration_to_datetime__schema,
+    notifier_tools.schedule_notification__schema,
+    notifier_tools.web_search__schema
 ]
 
 
@@ -101,4 +99,4 @@ def chat(user_input, messages=messages, system=None, tools=tools_schemas, tools_
 
 # To run locally: 
 # get inside claude folder 
-# and execute: python -m agents.news_notification_agent.notifier
+# and execute: python -m agents.notification_agent.notifier

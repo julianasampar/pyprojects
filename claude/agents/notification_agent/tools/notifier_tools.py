@@ -1,5 +1,7 @@
+import asyncio
 from anthropic.types import ToolParam
 from datetime import datetime, timedelta 
+from desktop_notifier import DesktopNotifier, DEFAULT_SOUND
 
 ## Defining the tool = Python function
 def get_current_datetime(date_format="%Y-%m-%d %H:%M:%S"):
@@ -99,4 +101,52 @@ add_duration_to_datetime__schema = {
         },
         "required": ["datetime_str"],
     },
+}
+
+async def schedule_notification(title:str, content:str, delay_seconds=0):
+
+    delay_seconds = int(delay_seconds)
+    
+    notifier = DesktopNotifier()
+
+    await asyncio.sleep(delay_seconds)
+    
+    await notifier.send(
+            title=title,
+            message=content,
+            timeout=0.5,
+            sound=DEFAULT_SOUND,
+        )
+
+    return "Notification was successfully sent"
+
+## Defining the JSON schema of the function 
+schedule_notification__schema = ToolParam({
+    "name": "schedule_notification",
+    "description": "Schedule a desktop notification to appear after a specified delay.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "title": {
+                "type": "string",
+                "description": "Title for the notification"
+            },
+            "content": {
+                "type": "string",
+                "description": "Content to be included in the notification body "
+            },
+            "delay_seconds": {
+                "type": "number",
+                "description": "Number of seconds to wait before sending the notification"
+            },
+        },
+        "required": ["title", "content"]
+    }
+})
+
+
+web_search__schema = {
+  "type": "web_search_20250305",
+  "name": "web_search",
+  "max_uses": 2
 }

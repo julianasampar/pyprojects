@@ -6,7 +6,7 @@ from datetime import datetime
 from anthropic import Anthropic
 
 sys.path.append("/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects")
-from claude.agents.news_notification_agent import notifier
+from claude.agents.notification_agent import notifier
 
 client = Anthropic(
     api_key=os.getenv("ANTHROPIC_API_KEY")
@@ -15,10 +15,11 @@ client = Anthropic(
 user_input = "Send me a Mac Notifications containg headline and content for one of the latest news in the world and/or Brazil of the last 5 HOURS."
 
 system = """ You are a news reporter. Your role is to create OS Notifications to report the latest news.
-            Focus on the text. Don't include any HTML or XML tags.
+            Focus on the text. Extract away any HTML or XML tags within the text. Report only the text itself.
             The content must fit into the size (320 pixels x 340 pixels) of the MacOs notification banner.
             One notification must report only one news.
             Make sure to keep it concise and to format the text in a readable and appropriate way for Mac notifications.
+            Set notification title as being: "TIME FOR YOUR NEWS!!!!"
             Interests: Politics, Economics,  International Affairs.
         """
 print(os.getenv("ANTHROPIC_API_KEY"))
