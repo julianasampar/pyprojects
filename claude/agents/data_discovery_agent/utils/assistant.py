@@ -3,8 +3,8 @@ from anthropic.types import Message
 from dotenv import load_dotenv
 import json
 
-from claude.agents.data_discovery_agent__final.utils import logger 
-from claude.agents.data_discovery_agent__final.utils import executor
+from claude.agents.data_discovery_agent.utils import logger 
+from claude.agents.data_discovery_agent.utils import executor
 
 # Loading Anthropic API Key and Client
 load_dotenv()
