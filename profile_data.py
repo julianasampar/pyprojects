@@ -2,9 +2,12 @@
 
 from claude.agents.data_discovery_agent.utils import reader
 from claude.agents.data_discovery_agent.profiling import profiler
+from claude.agents.data_discovery_agent.utils import writer
 
 # How to use it:
-#source  = reader.get_datasource("csv",\
- #     folder_path="/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/airbnb/rio_de_janeiro")
-#results = profiler.profile_all_tables(source)
+source  = reader.get_datasource("csv",\
+      folder_path="/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/airbnb/rio_de_janeiro")
+results = profiler.profile_all_tables(source)
+storage = writer.get_storage('local', folder_path='/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/airbnb/rio_de_janeiro/profiles')
+storage.write_json_to_storage(content=results)
 #print(results)
