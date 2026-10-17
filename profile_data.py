@@ -11,4 +11,3 @@ from claude.agents.data_discovery_agent.utils import writer
 # results = profiler.profile_all_tables(source)
 # storage = writer.get_storage('local', folder_path="")
 # storage.write_json_to_storage(content=results)
-#print(results)
