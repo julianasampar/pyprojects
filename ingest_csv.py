@@ -1,14 +1,23 @@
+# Script dedicated to ingesting data into local databases (SQLite, DuckDB)
+
 import sqlite3
 import duckdb
 from pathlib import Path
 import pandas as pd
 
-def import_csv_to_sqlite(database, database_path, folder_path):
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+def import_csv_to_sqlite(database, folder_path):
     path = Path(folder_path)
 
     if database == 'sqlite':
+        database_path = os.getenv('SQLITE')
         conn = sqlite3.connect(database_path)
+
     elif database == 'duckdb':
+        database_path = os.getenv('DUCKDB')
         conn = duckdb.connect(database_path)
         
     for file in path.glob("*.csv"):
@@ -19,7 +28,6 @@ def import_csv_to_sqlite(database, database_path, folder_path):
             df = df.to_sql(f"{table_name}", conn, if_exists="replace", index=False)
             print(f"Successfully imported csv file {table_name} into SQLite")
 
-            conn.close()
 
         elif database == 'duckdb':
             conn.sql(f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM read_csv_auto('{file}')")
@@ -27,7 +35,6 @@ def import_csv_to_sqlite(database, database_path, folder_path):
         
     conn.close()
 
-
-import_csv_to_sqlite("duckdb", \
-                     "./dbt/dbt_database.duckdb", \
-                     "/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/dvd_rental_store")
+# How to use it:
+# import_csv_to_sqlite("duckdb", \
+    #                 "/Users/julianasampar/Desktop/learning_dev/personal_dev/pyprojects/others/archive/airbnb/rio_de_janeiro")
